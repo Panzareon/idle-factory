@@ -1,3 +1,4 @@
 <Solution>
+  <Project Path="IdleFactory.Tests/IdleFactory.Tests.csproj" Id="b37d95b8-7ff3-4db2-b1a3-dc19a3575b23" />
   <Project Path="IdleFactory/IdleFactory.csproj" Id="fc93ef2b-8bb3-499b-a33f-d291306d6c4f" />
 </Solution>
