@@ -43,10 +43,14 @@ namespace IdleFactory.Data
       }
     }
 
+    /// <summary>
+    /// Gets the base value of this integer, that is multiplied with a power of the <see cref="Base"/>.
+    /// </summary>
     public ulong BaseValue { get; } = baseValue;
 
     /// <summary>
-    /// Gets or sets the exponent 
+    /// Gets the exponent specifying the power of the <see cref="Base"/> that the <see cref="BaseValue"/>
+    /// should be multiplied with, to get the actual value.
     /// </summary>
     public long Exponent { get; } = exponent;
 
@@ -92,6 +96,11 @@ namespace IdleFactory.Data
     }
 
     public static implicit operator LargeInteger(ulong value)
+    {
+      return new LargeInteger(value, 0).EnsureBelowLimit();
+    }
+
+    public static implicit operator LargeInteger(uint value)
     {
       return new LargeInteger(value, 0).EnsureBelowLimit();
     }

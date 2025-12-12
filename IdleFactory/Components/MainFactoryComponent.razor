@@ -1,0 +1,13 @@
+﻿<h3>MainFactoryComponent</h3>
+
+@foreach (var generator in MainFactory.ResourceGenerators)
+{
+	<div>@generator.ResourceType</div>
+}
+
+@foreach (var resource in MainFactory.Resources)
+{
+	<div>
+		@resource.Key:@resource.Value
+	</div>
+}
