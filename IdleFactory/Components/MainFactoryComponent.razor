@@ -2,7 +2,7 @@
   @foreach (var resource in MainFactory.Resources)
   {
 	  <li class="list-group-item">
-		  @resource.Key:@resource.Value
+			@resource.Key:@resource.Value.ToString(Constants.DefaultDisplayPrecision)
 	  </li>
   }
 </ul>
@@ -14,7 +14,7 @@
 			Lvl @generator.UpgradeAmountLevel @generator.ResourceType
 		</div>
 		<div class="card-body">
-			+@generator.GenerationAmount
+			+@generator.GenerationAmount.ToString(Constants.DefaultDisplayPrecision)
 			every @generator.GenerationTime s
 		</div>
 		<div class="card-body">

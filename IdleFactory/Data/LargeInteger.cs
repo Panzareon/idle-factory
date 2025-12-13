@@ -11,17 +11,16 @@ namespace IdleFactory.Data
   /// <remarks>
   /// Basically stores the value as <see cref="BaseValue"/> * <see cref="Base"/> ^ <see cref="Exponent"/>.
   /// </remarks>
-  public struct LargeInteger(ulong baseValue, long exponent)
+  public struct LargeInteger
   {
     /// <summary>
     /// Not sure if this should use base 10 (for easier display), or base 2 (for easier calculations).
     /// </summary>
     public const int Base = 10;
+    private const int MaxDigitsToShowWithoutScientificNotation = 6;
+    public static readonly int MaxPrecisionExponent = 15;
 
-    /// <summary>
-    /// Stores what the maximum exponent for the <see cref="Base"/> would be, that can still be stored in a <see cref="ulong"/>.
-    /// </summary>
-    public static readonly int MaxExponentInLong;
+    public static readonly double MaxPrecision;
 
     /// <summary>
     /// Stores powers of <see cref="Base"/>, with the index being the exponent, from 0 to <see cref="MaxExponentInLong"/>.
@@ -33,27 +32,72 @@ namespace IdleFactory.Data
     /// </summary>
 		static LargeInteger()
     {
-      MaxExponentInLong = (int)MathF.Log(ulong.MaxValue, Base);
-      ExponentValues = new ulong[MaxExponentInLong + 1];
+      ExponentValues = new ulong[MaxPrecisionExponent + 1];
       ulong value = 1;
       ExponentValues[0] = value;
-      for (var i = 1; i <= MaxExponentInLong; i++)
+      for (var i = 1; i <= MaxPrecisionExponent; i++)
       {
         value *= Base;
         ExponentValues[i] = value;
       }
+
+      MaxPrecision = 1.0 / ExponentValues[MaxPrecisionExponent];
+    }
+
+    private LargeInteger(double baseValue, long exponent)
+    {
+      this.BaseValue = baseValue;
+      this.Exponent = exponent;
+    }
+
+    public static LargeInteger Create(double baseValue, long exponent)
+    {
+      if (baseValue == 0)
+      {
+        exponent = 0;
+      }
+      else if (baseValue > 0)
+      {
+        while (baseValue >= Base)
+        {
+          baseValue /= Base;
+          exponent++;
+        }
+
+        while (baseValue < 1)
+        {
+          baseValue *= Base;
+          exponent--;
+        }
+      }
+      else
+      {
+        while (baseValue <= -Base)
+        {
+          baseValue /= Base;
+          exponent++;
+        }
+
+        while (baseValue > -1)
+        {
+          baseValue *= Base;
+          exponent--;
+        }
+      }
+
+      return new LargeInteger(baseValue, exponent);
     }
 
     /// <summary>
     /// Gets the base value of this integer, that is multiplied with a power of the <see cref="Base"/>.
     /// </summary>
-    public ulong BaseValue { get; } = baseValue;
+    public double BaseValue { get; }
 
     /// <summary>
     /// Gets the exponent specifying the power of the <see cref="Base"/> that the <see cref="BaseValue"/>
     /// should be multiplied with, to get the actual value.
     /// </summary>
-    public long Exponent { get; } = exponent;
+    public long Exponent { get; }
 
     public readonly LargeInteger ToThePower(int exponent)
     {
@@ -68,23 +112,22 @@ namespace IdleFactory.Data
 
     public override readonly string ToString()
     {
-      if (this.Exponent > 0)
+      return this.ToString(MaxPrecisionExponent);
+    }
+
+    public readonly string ToString(int maxPrecisionForScientificNotation)
+    {
+      if (this.Exponent > MaxDigitsToShowWithoutScientificNotation)
       {
-        var targetExponent = MaxExponentInLong;
-        for (var i = 0; i <= MaxExponentInLong; i++)
+        if (maxPrecisionForScientificNotation > this.Exponent)
         {
-          if (this.BaseValue < ExponentValues[i])
-          {
-            targetExponent = i - 1;
-            break;
-          }
+          maxPrecisionForScientificNotation = (int)this.Exponent;
         }
 
-        var value = this.BaseValue.ToString();
-        return $"{value.Substring(0, 1)}.{value.Substring(1)}E{this.Exponent + targetExponent}";
+        return $"{this.BaseValue.ToString($"F{maxPrecisionForScientificNotation}")}E{this.Exponent}";
       }
 
-      return this.BaseValue.ToString();
+      return (this.BaseValue * Math.Pow(Base, this.Exponent)).ToString("F0");
     }
 
     /// <summary>
@@ -100,7 +143,15 @@ namespace IdleFactory.Data
         return false;
       }
 
-      if (largeInteger.BaseValue == this.BaseValue && largeInteger.Exponent == this.Exponent)
+      var maxPrecision = MaxPrecision;
+      if (this.Exponent < MaxPrecisionExponent)
+      {
+        maxPrecision = 1.0 / ExponentValues[this.Exponent];
+      }
+
+      if (largeInteger.BaseValue + maxPrecision >= this.BaseValue
+        && largeInteger.BaseValue - maxPrecision <= this.BaseValue
+        && largeInteger.Exponent == this.Exponent)
       {
         return true;
       }
@@ -111,23 +162,15 @@ namespace IdleFactory.Data
     {
       if (left.Exponent < right.Exponent)
       {
-        var exponentDifferent = right.Exponent - left.Exponent;
-        if (exponentDifferent > MaxExponentInLong)
-        {
-          return false;
-        }
-
-        return left.BaseValue / ExponentValues[exponentDifferent] > right.BaseValue;
+        return false;
+      }
+      else if (left.Exponent > right.Exponent)
+      {
+        return true;
       }
       else
       {
-        var exponentDifferent = left.Exponent - right.Exponent;
-        if (exponentDifferent > MaxExponentInLong)
-        {
-          return true;
-        }
-
-        return left.BaseValue > right.BaseValue / ExponentValues[exponentDifferent];
+        return left.BaseValue > right.BaseValue;
       }
     }
     public static bool operator <(LargeInteger left, LargeInteger right)
@@ -143,14 +186,14 @@ namespace IdleFactory.Data
       return !(left < right);
     }
 
-    public static implicit operator LargeInteger(ulong value)
+    public static implicit operator LargeInteger(long value)
     {
-      return new LargeInteger(value, 0).EnsureBelowLimit();
+      return Create(value, 0);
     }
 
-    public static implicit operator LargeInteger(uint value)
+    public static implicit operator LargeInteger(int value)
     {
-      return new LargeInteger(value, 0).EnsureBelowLimit();
+      return Create(value, 0);
     }
 
     public static LargeInteger operator +(LargeInteger left, LargeInteger right)
@@ -164,14 +207,14 @@ namespace IdleFactory.Data
 
       static LargeInteger Add(LargeInteger left, LargeInteger right)
       {
-        if (left.Exponent > right.Exponent + MaxExponentInLong)
+        if (left.Exponent > right.Exponent + MaxPrecisionExponent)
         {
           // right value is too small to add to the left, so result is roughly the same as left
           return left;
         }
 
         right = right.SetExponent(left.Exponent);
-        return new LargeInteger(left.BaseValue + right.BaseValue, left.Exponent).EnsureBelowLimit();
+        return Create(left.BaseValue + right.BaseValue, left.Exponent);
       }
     }
 
@@ -179,14 +222,14 @@ namespace IdleFactory.Data
     {
       if (left.Exponent > right.Exponent)
       {
-        if (left.Exponent > right.Exponent + MaxExponentInLong)
+        if (left.Exponent > right.Exponent + MaxPrecisionExponent)
         {
           // right value is too small to remove from the left, so result is roughly the same as left
           return left;
         }
 
         right = right.SetExponent(left.Exponent);
-        return new LargeInteger(left.BaseValue - right.BaseValue, left.Exponent).EnsureBelowLimit();
+        return Create(left.BaseValue - right.BaseValue, left.Exponent);
       }
       else
       {
@@ -197,135 +240,28 @@ namespace IdleFactory.Data
         }
 
         left = left.SetExponent(right.Exponent);
-        return new LargeInteger(left.BaseValue - right.BaseValue, left.Exponent).EnsureBelowLimit();
+        return Create(left.BaseValue - right.BaseValue, left.Exponent);
       }
     }
 
     public static LargeInteger operator *(LargeInteger left, LargeInteger right)
     {
-      return new LargeInteger(left.BaseValue, left.Exponent + right.Exponent) * right.BaseValue;
+      return Create(left.BaseValue * right.BaseValue, left.Exponent + right.Exponent);
     }
 
-    public static LargeInteger operator *(LargeInteger left, ulong right)
+    public static LargeInteger operator *(LargeInteger left, long right)
     {
-      if (right == 0)
-      {
-        return new LargeInteger(0, 0);
-      }
-
-      var maxTarget = MaxExponentInLong / 2;
-      int maxExponent = 0;
-
-      // Check if this can be multiplied without reducing accuracy of one side
-      for (var i = 1; i <= maxTarget; i++)
-      {
-        var currentTarget = ExponentValues[i];
-        if (currentTarget > right)
-        {
-          maxExponent = MaxExponentInLong - i;
-          left = left.ReduceAccuracy(maxExponent);
-
-          return new LargeInteger(left.BaseValue * right, left.Exponent).EnsureBelowLimit();
-        }
-
-        if (currentTarget > left.BaseValue)
-        {
-          maxExponent = MaxExponentInLong - i;
-          return ReduceAccuracyAndMultiply(left, right, maxExponent);
-        }
-      }
-
-      // Both values (without the exponent) are too big, to allow multiplying them without loosing
-      left = left.ReduceAccuracy(maxTarget);
-      return ReduceAccuracyAndMultiply(left, right, maxTarget);
-
-      static LargeInteger ReduceAccuracyAndMultiply(LargeInteger left, ulong right, int maxExponent)
-      {
-        var targetValue = ExponentValues[maxExponent];
-        var exponent = left.Exponent;
-        while (right > targetValue)
-        {
-          right /= Base;
-          exponent++;
-        }
-
-        return new LargeInteger(left.BaseValue * right, exponent).EnsureBelowLimit();
-      }
+      return Create(left.BaseValue * right, left.Exponent);
     }
+
+    public static LargeInteger operator *(LargeInteger left, int right)
+    {
+      return Create(left.BaseValue * right, left.Exponent);
+    }
+
     public static LargeInteger operator *(LargeInteger left, double right)
     {
-      var currentDoubleExponent = (int)Math.Log(right, Base);
-
-      var currentPrecision = MaxExponentInLong;
-      for (var i = 1; i < MaxExponentInLong; i++)
-      {
-        if (left.BaseValue < ExponentValues[i])
-        {
-          currentPrecision = i - 1;
-          break;
-        }
-      }
-
-      var expectedDoubleExponent = MaxExponentInLong - 1 - currentPrecision;
-      var exponentDelta = expectedDoubleExponent - currentDoubleExponent;
-      if (left.Exponent - exponentDelta < 0)
-      {
-        exponentDelta = (int)left.Exponent;
-      }
-
-      if (exponentDelta == 0)
-      {
-        return new LargeInteger((ulong)(left.BaseValue * right), left.Exponent).EnsureBelowLimit();
-      }
-      else if (exponentDelta < 0)
-      {
-        Debug.Assert(-exponentDelta <= MaxExponentInLong);
-        right = right / ExponentValues[-exponentDelta];
-        return new LargeInteger((ulong)(left.BaseValue * right), left.Exponent - exponentDelta).EnsureBelowLimit();
-      }
-      else
-      {
-        Debug.Assert(exponentDelta <= MaxExponentInLong);
-        right = right * ExponentValues[exponentDelta];
-        return new LargeInteger((ulong)(left.BaseValue * right), left.Exponent - exponentDelta).EnsureBelowLimit();
-      }
-    }
-
-    /// <summary>
-    /// Ensures that the value is small enough, that simple operations can be used without causing an overflow.
-    /// </summary>
-    /// <returns>A copy of this with reduced accuracy, if the <see cref="BaseValue"/> is too big.</returns>
-    private readonly LargeInteger EnsureBelowLimit()
-    {
-      if (this.BaseValue > ExponentValues[MaxExponentInLong - 1])
-      {
-        return this.ReduceAccuracy();
-      }
-
-      return this;
-    }
-
-    private readonly LargeInteger ReduceAccuracy()
-    {
-      return new LargeInteger(this.BaseValue / Base, this.Exponent + 1);
-    }
-
-    private readonly LargeInteger ReduceAccuracy(int maxExponent)
-    {
-      var targetValue = ExponentValues[maxExponent];
-      var current = this;
-      while (current.BaseValue > targetValue)
-      {
-        current = current.ReduceAccuracy();
-      }
-
-      return current;
-    }
-
-    private readonly LargeInteger SetExponent(long targetExponent)
-    {
-      var multiplier = ExponentValues[targetExponent - this.Exponent];
-      return new LargeInteger(this.BaseValue / multiplier, targetExponent);
+      return Create(left.BaseValue * right, left.Exponent);
     }
 
     public override readonly int GetHashCode()
@@ -341,6 +277,12 @@ namespace IdleFactory.Data
     public static bool operator !=(LargeInteger left, LargeInteger right)
     {
       return !(left == right);
+    }
+
+    private readonly LargeInteger SetExponent(long targetExponent)
+    {
+      var multiplier = ExponentValues[targetExponent - this.Exponent];
+      return new LargeInteger(this.BaseValue / multiplier, targetExponent);
     }
   }
 }

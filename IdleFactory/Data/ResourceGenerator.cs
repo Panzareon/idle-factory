@@ -24,7 +24,7 @@ namespace IdleFactory.Data
 
     public string GetUpgradeCostString()
     {
-      return string.Join(" + ", this.GetUpgradeCost().Select(x => $"{x.Amount} {x.ResourceType}"));
+      return string.Join(" + ", this.GetUpgradeCost().Select(x => $"{x.Amount.ToString(Constants.DefaultDisplayPrecision)} {x.ResourceType}"));
     }
 
     public IEnumerable<ResourceCost> GetUpgradeCost()
