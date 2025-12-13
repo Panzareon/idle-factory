@@ -16,15 +16,17 @@ namespace IdleFactory.Data
 
     public int UpgradeAmountLevel { get; set; } = 1;
 
+    public bool IsFocused { get; set; }
+
     public void Upgrade()
     {
       this.UpgradeAmountLevel++;
-      this.GenerationAmount *= 2;
+      this.GenerationAmount *= 1.5;
     }
 
     public string GetUpgradeCostString()
     {
-      return string.Join(" + ", this.GetUpgradeCost().Select(x => $"{x.Amount.ToString(Constants.DefaultDisplayPrecision)} {x.ResourceType}"));
+      return this.GetUpgradeCost().ToCostString();
     }
 
     public IEnumerable<ResourceCost> GetUpgradeCost()

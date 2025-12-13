@@ -13,6 +13,8 @@ namespace IdleFactory.Data
 
     public IList<ResourceGenerator> ResourceGenerators { get; } = [];
 
+    public IList<MainFactoryUnlocks> Unlocks { get; } = [];
+
     public event EventHandler? PropertyChanged;
 
     public void Add(ResourceType resourceType, LargeInteger value)
@@ -39,6 +41,14 @@ namespace IdleFactory.Data
         }
 
         this.Resources[cost.ResourceType] = currentValue - cost.Amount;
+      }
+    }
+
+    public void Remove(IEnumerable<ResourceCost> costs)
+    {
+      foreach (var cost in costs)
+      {
+        this.Remove(cost);
       }
     }
 

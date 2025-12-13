@@ -43,7 +43,13 @@ namespace IdleFactory.Services
     {
       foreach (var generator in mainFactory.ResourceGenerators)
       {
-        generator.ToNextGeneration += deltaTime;
+        var multiplier = 1.0f;
+        if (generator.IsFocused)
+        {
+          multiplier *= 2.0f;
+        }
+
+        generator.ToNextGeneration += deltaTime * multiplier;
         if (generator.ToNextGeneration > generator.GenerationTime)
         {
           var numberOfTicks = (ulong)(generator.ToNextGeneration / generator.GenerationTime);

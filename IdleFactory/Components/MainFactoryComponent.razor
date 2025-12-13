@@ -1,10 +1,10 @@
 ﻿<ul class="list-group list-group-horizontal">
-  @foreach (var resource in MainFactory.Resources)
-  {
-	  <li class="list-group-item">
+	@foreach (var resource in MainFactory.Resources)
+	{
+		<li class="list-group-item">
 			@resource.Key:@resource.Value.ToString(Constants.DefaultDisplayPrecision)
-	  </li>
-  }
+		</li>
+	}
 </ul>
 
 @foreach (var generator in MainFactory.ResourceGenerators)
@@ -12,6 +12,14 @@
 	<div class="card col-md-6 col-lg-4">
 		<div class="card-header">
 			Lvl @generator.UpgradeAmountLevel @generator.ResourceType
+			@if (IsFocusAvailable)
+			{
+				<div class="btn-group-toggle" data-toggle="buttons">
+					<label class="btn btn-secondary active">
+						<input type="checkbox" checked="@generator.IsFocused" @onchange="() => ToggleFocus(generator)" autocomplete="off"> Focused
+					</label>
+				</div>
+			}
 		</div>
 		<div class="card-body">
 			+@generator.GenerationAmount.ToString(Constants.DefaultDisplayPrecision)
@@ -22,3 +30,18 @@
 		</div>
 	</div>
 }
+<ul class="list-group list-group-horizontal">
+	@foreach (var unlock in MainFactory.Unlocks)
+	{
+		<li class="list-group-item">
+			@unlock
+		</li>
+	}
+</ul>
+
+<div>
+	@foreach (var visibleUnlock in GetVisibleUnlocks())
+	{
+		<button class="btn btn-primary" @onclick="() => Unlock(visibleUnlock.Unlock)" disabled="@(!visibleUnlock.CanBuy)">@visibleUnlock.Unlock (@visibleUnlock.CostString)</button>
+	}
+</div>
