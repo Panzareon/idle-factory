@@ -69,6 +69,48 @@ namespace IdleFactory.Tests.Data
     }
 
     [Test]
+    public void MultipleWithDoubleTest()
+    {
+      var value1 = new LargeInteger(100, 10);
+      var value2 = 100.0;
+
+      var expectedResult = new LargeInteger(100_000_000_000_000, 0);
+      Assert.That(value1 * value2, Is.EqualTo(expectedResult), $"{value1} * {value2} should be {expectedResult}, but was {value1 * value2}");
+    }
+
+    [Test]
+    public void MultipleWithSmallDoubleTest()
+    {
+      var value1 = new LargeInteger(100, 10);
+      var value2 = 0.0001;
+
+      var expectedResult = new LargeInteger(100_000_000, 0);
+      Assert.That(value1 * value2, Is.EqualTo(expectedResult), $"{value1} * {value2} should be {expectedResult}, but was {value1 * value2}");
+    }
+
+
+    [Test]
+    public void MultiplyLargeValuesTest()
+    {
+      var value1 = new LargeInteger(258_942_578_434_345_463, 15);
+      var value2 = 234_456_789_675_534_244.0;
+
+      var expectedResult = new LargeInteger(607_108_456_500_218_675, 32);
+      Assert.That(value1 * value2, Is.EqualTo(expectedResult), $"{value1} * {value2} should be {expectedResult}, but was {value1*value2}");
+    }
+
+
+    [Test]
+    public void MultiplyLargeValueWithSmallValueTest()
+    {
+      var value1 = new LargeInteger(258_942_578_434_345_463, 15);
+      var value2 = 0.000_000_234_456_789_675_534_244;
+
+      var expectedResult = new LargeInteger(607_108_456_500_218_624, 8);
+      Assert.That(value1 * value2, Is.EqualTo(expectedResult), $"{value1} * {value2} should be {expectedResult}, but was {value1*value2}");
+    }
+
+    [Test]
     public void IsLargerTest()
     {
       var value1 = new LargeInteger(1000, 1);

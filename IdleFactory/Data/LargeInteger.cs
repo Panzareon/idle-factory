@@ -76,6 +76,7 @@ namespace IdleFactory.Data
           if (this.BaseValue < ExponentValues[i])
           {
             targetExponent = i - 1;
+            break;
           }
         }
 
@@ -224,7 +225,7 @@ namespace IdleFactory.Data
           maxExponent = MaxExponentInLong - i;
           left = left.ReduceAccuracy(maxExponent);
 
-          return new LargeInteger(left.BaseValue * right, left.Exponent);
+          return new LargeInteger(left.BaseValue * right, left.Exponent).EnsureBelowLimit();
         }
 
         if (currentTarget > left.BaseValue)
@@ -248,7 +249,45 @@ namespace IdleFactory.Data
           exponent++;
         }
 
-        return new LargeInteger(left.BaseValue * right, exponent);
+        return new LargeInteger(left.BaseValue * right, exponent).EnsureBelowLimit();
+      }
+    }
+    public static LargeInteger operator *(LargeInteger left, double right)
+    {
+      var currentDoubleExponent = (int)Math.Log(right, Base);
+
+      var currentPrecision = MaxExponentInLong;
+      for (var i = 1; i < MaxExponentInLong; i++)
+      {
+        if (left.BaseValue < ExponentValues[i])
+        {
+          currentPrecision = i - 1;
+          break;
+        }
+      }
+
+      var expectedDoubleExponent = MaxExponentInLong - 1 - currentPrecision;
+      var exponentDelta = expectedDoubleExponent - currentDoubleExponent;
+      if (left.Exponent - exponentDelta < 0)
+      {
+        exponentDelta = (int)left.Exponent;
+      }
+
+      if (exponentDelta == 0)
+      {
+        return new LargeInteger((ulong)(left.BaseValue * right), left.Exponent).EnsureBelowLimit();
+      }
+      else if (exponentDelta < 0)
+      {
+        Debug.Assert(-exponentDelta <= MaxExponentInLong);
+        right = right / ExponentValues[-exponentDelta];
+        return new LargeInteger((ulong)(left.BaseValue * right), left.Exponent - exponentDelta).EnsureBelowLimit();
+      }
+      else
+      {
+        Debug.Assert(exponentDelta <= MaxExponentInLong);
+        right = right * ExponentValues[exponentDelta];
+        return new LargeInteger((ulong)(left.BaseValue * right), left.Exponent - exponentDelta).EnsureBelowLimit();
       }
     }
 
