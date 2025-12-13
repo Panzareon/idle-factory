@@ -1,13 +1,24 @@
-﻿<h3>MainFactoryComponent</h3>
+﻿<ul class="list-group list-group-horizontal">
+  @foreach (var resource in MainFactory.Resources)
+  {
+	  <li class="list-group-item">
+		  @resource.Key:@resource.Value
+	  </li>
+  }
+</ul>
 
 @foreach (var generator in MainFactory.ResourceGenerators)
 {
-	<div>@generator.ResourceType</div>
-}
-
-@foreach (var resource in MainFactory.Resources)
-{
-	<div>
-		@resource.Key:@resource.Value
+	<div class="card col-md-6 col-lg-4">
+		<div class="card-header">
+			Lvl @generator.UpgradeAmountLevel @generator.ResourceType
+		</div>
+		<div class="card-body">
+			+@generator.GenerationAmount
+			every @generator.GenerationTime s
+		</div>
+		<div class="card-body">
+			<button class="btn btn-primary" @onclick="() => Upgrade(generator)" disabled="@(!CanUpgrade(generator))">Upgrade (@generator.GetUpgradeCostString())</button>
+		</div>
 	</div>
 }

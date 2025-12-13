@@ -1,4 +1,5 @@
 ﻿
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 
@@ -54,6 +55,17 @@ namespace IdleFactory.Data
     /// </summary>
     public long Exponent { get; } = exponent;
 
+    public readonly LargeInteger ToThePower(int exponent)
+    {
+      LargeInteger result = 1;
+      for (var i = 0; i < exponent; i++)
+      {
+        result = result * this;
+      }
+
+      return result;
+    }
+
     public override readonly string ToString()
     {
       if (this.Exponent > 0)
@@ -94,6 +106,41 @@ namespace IdleFactory.Data
 
       return false;
     }
+    public static bool operator >(LargeInteger left, LargeInteger right)
+    {
+      if (left.Exponent < right.Exponent)
+      {
+        var exponentDifferent = right.Exponent - left.Exponent;
+        if (exponentDifferent > MaxExponentInLong)
+        {
+          return false;
+        }
+
+        return left.BaseValue / ExponentValues[exponentDifferent] > right.BaseValue;
+      }
+      else
+      {
+        var exponentDifferent = left.Exponent - right.Exponent;
+        if (exponentDifferent > MaxExponentInLong)
+        {
+          return true;
+        }
+
+        return left.BaseValue > right.BaseValue / ExponentValues[exponentDifferent];
+      }
+    }
+    public static bool operator <(LargeInteger left, LargeInteger right)
+    {
+      return right > left;
+    }
+    public static bool operator <=(LargeInteger left, LargeInteger right)
+    {
+      return !(left > right);
+    }
+    public static bool operator >=(LargeInteger left, LargeInteger right)
+    {
+      return !(left < right);
+    }
 
     public static implicit operator LargeInteger(ulong value)
     {
@@ -124,6 +171,32 @@ namespace IdleFactory.Data
 
         right = right.SetExponent(left.Exponent);
         return new LargeInteger(left.BaseValue + right.BaseValue, left.Exponent).EnsureBelowLimit();
+      }
+    }
+
+    public static LargeInteger operator -(LargeInteger left, LargeInteger right)
+    {
+      if (left.Exponent > right.Exponent)
+      {
+        if (left.Exponent > right.Exponent + MaxExponentInLong)
+        {
+          // right value is too small to remove from the left, so result is roughly the same as left
+          return left;
+        }
+
+        right = right.SetExponent(left.Exponent);
+        return new LargeInteger(left.BaseValue - right.BaseValue, left.Exponent).EnsureBelowLimit();
+      }
+      else
+      {
+        if (right > left)
+        {
+          Debug.Fail("LargeInteger does not support negative values");
+          return 0;
+        }
+
+        left = left.SetExponent(right.Exponent);
+        return new LargeInteger(left.BaseValue - right.BaseValue, left.Exponent).EnsureBelowLimit();
       }
     }
 

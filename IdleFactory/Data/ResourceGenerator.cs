@@ -1,4 +1,5 @@
-﻿namespace IdleFactory.Data
+﻿
+namespace IdleFactory.Data
 {
   public class ResourceGenerator
   {
@@ -12,5 +13,23 @@
     public float ToNextGeneration { get; set; }
 
     public LargeInteger GenerationAmount { get; set; }
+
+    public int UpgradeAmountLevel { get; set; } = 1;
+
+    public void Upgrade()
+    {
+      this.UpgradeAmountLevel++;
+      this.GenerationAmount *= 2;
+    }
+
+    public string GetUpgradeCostString()
+    {
+      return string.Join(" + ", this.GetUpgradeCost().Select(x => $"{x.Amount} {x.ResourceType}"));
+    }
+
+    public IEnumerable<ResourceCost> GetUpgradeCost()
+    {
+      yield return new ResourceCost(ResourceType.Red, ((LargeInteger)2).ToThePower(this.UpgradeAmountLevel));
+    }
   }
 }

@@ -1,4 +1,6 @@
-﻿namespace IdleFactory.Data
+﻿using System.Diagnostics;
+
+namespace IdleFactory.Data
 {
   public enum ResourceType
   {
@@ -25,6 +27,32 @@
       }
 
       this.PropertyChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    public void Remove(ResourceCost cost)
+    {
+      if (this.Resources.TryGetValue(cost.ResourceType, out var currentValue))
+      {
+        if (currentValue < cost.Amount)
+        {
+          Debug.Fail("Not enougth resources");
+        }
+
+        this.Resources[cost.ResourceType] = currentValue - cost.Amount;
+      }
+    }
+
+    public bool HasResources(IEnumerable<ResourceCost> costs)
+    {
+      foreach (var cost in costs)
+      {
+        if (!this.Resources.TryGetValue(cost.ResourceType, out var amount) || amount < cost.Amount)
+        {
+          return false;
+        }
+      }
+
+      return true;
     }
   }
 }

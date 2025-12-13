@@ -16,6 +16,7 @@ namespace IdleFactory.Services
       }
 
       factoryDataService.Data.MainFactory.ResourceGenerators.Add(new ResourceGenerator { ResourceType = ResourceType.Red, GenerationAmount = 1, GenerationTime = 1 });
+      factoryDataService.Data.MainFactory.Resources.Add(ResourceType.Red, 0);
       this.timer = new Timer(this.OnTimerTick, null, TimeSpan.Zero, targetTickTime);
     }
 
