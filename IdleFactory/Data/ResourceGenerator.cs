@@ -21,7 +21,14 @@ namespace IdleFactory.Data
     public void Upgrade()
     {
       this.UpgradeAmountLevel++;
-      this.GenerationAmount *= 1.5;
+      if (this.UpgradeAmountLevel < 10)
+      {
+        this.GenerationTime /= 1.5f;
+      }
+      else
+      {
+        this.GenerationAmount *= 1.5;
+      }
     }
 
     public string GetUpgradeCostString()

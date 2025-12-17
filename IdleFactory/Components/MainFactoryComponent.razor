@@ -23,7 +23,7 @@
 		</div>
 		<div class="card-body">
 			+@generator.GenerationAmount.ToString(Constants.DefaultDisplayPrecision)
-			every @generator.GenerationTime s
+			every @generator.GenerationTime.ToString("G2") s
 		</div>
 		<div class="card-body">
 			<button class="btn btn-primary" @onclick="() => Upgrade(generator)" disabled="@(!CanUpgrade(generator))">Upgrade (@generator.GetUpgradeCostString())</button>

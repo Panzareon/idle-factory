@@ -1,11 +1,13 @@
 ﻿using IdleFactory.Data;
+using System.Diagnostics;
 
 namespace IdleFactory.Services
 {
   public sealed class GameLogicService(FactoryDataService factoryDataService) : IDisposable
   {
-    private static readonly TimeSpan targetTickTime = TimeSpan.FromSeconds(1 / 60f);
+    private static readonly TimeSpan targetTickTime = TimeSpan.FromSeconds(1 / 20f);
     private Timer timer;
+    private Stopwatch stopwatch = new Stopwatch();
 
     public void Init()
     {
@@ -17,12 +19,15 @@ namespace IdleFactory.Services
 
       factoryDataService.Data.MainFactory.ResourceGenerators.Add(new ResourceGenerator { ResourceType = ResourceType.Red, GenerationAmount = 1, GenerationTime = 1 });
       factoryDataService.Data.MainFactory.Resources.Add(ResourceType.Red, 0);
+      this.stopwatch.Start();
       this.timer = new Timer(this.OnTimerTick, null, TimeSpan.Zero, targetTickTime);
     }
 
     private void OnTimerTick(object? state)
     {
-      this.GameTick((float)targetTickTime.TotalSeconds);
+      var deltaTime = (float)this.stopwatch.Elapsed.TotalSeconds;
+      this.stopwatch.Restart();
+      this.GameTick(deltaTime);
     }
 
     /// <summary>
@@ -32,6 +37,8 @@ namespace IdleFactory.Services
     public void GameTick(float deltaTime)
     {
       this.GameTick(factoryDataService.Data.MainFactory, deltaTime);
+
+      factoryDataService.Data.AfterGameTick();
     }
 
     /// <summary>

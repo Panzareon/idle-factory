@@ -17,6 +17,16 @@ namespace IdleFactory.Data
 
     public event EventHandler? PropertyChanged;
 
+    private bool hasPropertyChanged;
+
+    public void AfterGameTick()
+    {
+      if (this.hasPropertyChanged)
+      {
+        this.PropertyChanged?.Invoke(this, EventArgs.Empty);
+      }
+    }
+
     public void Add(ResourceType resourceType, LargeInteger value)
     {
       if (this.Resources.TryGetValue(resourceType, out var currentValue))
@@ -28,7 +38,7 @@ namespace IdleFactory.Data
         this.Resources[resourceType] = value;
       }
 
-      this.PropertyChanged?.Invoke(this, EventArgs.Empty);
+      this.hasPropertyChanged = true;
     }
 
     public void Remove(ResourceCost cost)

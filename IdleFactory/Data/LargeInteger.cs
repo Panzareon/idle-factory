@@ -85,6 +85,11 @@ namespace IdleFactory.Data
         }
       }
 
+      if (exponent < 0)
+      {
+        return new LargeInteger(0, 0);
+      }
+
       if (exponent < MaxPrecisionExponent)
       {
         baseValue = Math.Round(baseValue, (int)exponent);
