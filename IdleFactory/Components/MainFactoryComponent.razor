@@ -11,6 +11,10 @@
 {
 	<div class="card col-md-6 col-lg-4">
 		<div class="card-header">
+			@if (generator.ConvertFrom != Data.ResourceType.Undefined)
+			{
+				<input type="checkbox" @bind="generator.IsEnabled" autocomplete="off">
+			}
 			Lvl @generator.UpgradeAmountLevel @generator.ResourceType
 			@if (IsFocusAvailable)
 			{

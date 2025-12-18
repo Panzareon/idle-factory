@@ -18,6 +18,8 @@ namespace IdleFactory.Data
 
     public bool IsFocused { get; set; }
 
+    public bool IsEnabled { get; set; } = true;
+
     public ResourceType ConvertFrom { get; set; } = ResourceType.Undefined;
 
     public float ConversionFactor { get; set; }

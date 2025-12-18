@@ -50,6 +50,11 @@ namespace IdleFactory.Services
     {
       foreach (var generator in mainFactory.ResourceGenerators)
       {
+        if (!generator.IsEnabled)
+        {
+          continue;
+        }
+
         var multiplier = 1.0f;
         if (generator.IsFocused)
         {
