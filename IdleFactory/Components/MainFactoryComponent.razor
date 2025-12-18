@@ -22,7 +22,15 @@
 			}
 		</div>
 		<div class="card-body">
-			+@generator.GenerationAmount.ToString(Constants.DefaultDisplayPrecision)
+			@if (generator.ConvertFrom == Data.ResourceType.Undefined)
+			{
+				<span>+@generator.GenerationAmount.ToString(Constants.DefaultDisplayPrecision) @generator.ConvertFrom</span>
+			}
+			else
+			{
+				<span>Convert @((generator.GenerationAmount / generator.ConversionFactor).ToString(Constants.DefaultDisplayPrecision)) @generator.ConvertFrom to @generator.GenerationAmount.ToString(Constants.DefaultDisplayPrecision) @generator.ConvertFrom</span>
+			}
+
 			every @generator.GenerationTime.ToString("G2") s
 		</div>
 		<div class="card-body">

@@ -18,6 +18,10 @@ namespace IdleFactory.Data
 
     public bool IsFocused { get; set; }
 
+    public ResourceType ConvertFrom { get; set; } = ResourceType.Undefined;
+
+    public float ConversionFactor { get; set; }
+
     public void Upgrade()
     {
       this.UpgradeAmountLevel++;
@@ -38,7 +42,15 @@ namespace IdleFactory.Data
 
     public IEnumerable<ResourceCost> GetUpgradeCost()
     {
-      yield return new ResourceCost(ResourceType.Red, ((LargeInteger)2).ToThePower(this.UpgradeAmountLevel));
+      if (this.ResourceType == ResourceType.Red)
+      {
+        yield return new ResourceCost(ResourceType.Red, ((LargeInteger)2).ToThePower(this.UpgradeAmountLevel));
+      }
+      else if (this.ResourceType == ResourceType.Blue)
+      {
+        yield return new ResourceCost(ResourceType.Red, 2000 * ((LargeInteger)2).ToThePower(this.UpgradeAmountLevel));
+        yield return new ResourceCost(ResourceType.Blue, ((LargeInteger)2).ToThePower(this.UpgradeAmountLevel));
+      }
     }
   }
 }

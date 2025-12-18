@@ -61,7 +61,30 @@ namespace IdleFactory.Services
         {
           var numberOfTicks = (ulong)(generator.ToNextGeneration / generator.GenerationTime);
           generator.ToNextGeneration -= numberOfTicks * generator.GenerationTime;
-          mainFactory.Add(generator.ResourceType, generator.GenerationAmount * numberOfTicks);
+          var amount = generator.GenerationAmount * numberOfTicks;
+          if (generator.ConvertFrom != ResourceType.Undefined)
+          {
+            var conversionCost = amount / generator.ConversionFactor;
+            if (mainFactory.HasResource(generator.ConvertFrom, conversionCost))
+            {
+              mainFactory.Remove(new ResourceCost(generator.ConvertFrom, conversionCost));
+            }
+            else
+            {
+              var availableAmount = mainFactory.GetResource(generator.ConvertFrom);
+              amount = availableAmount * generator.ConversionFactor;
+              var amountToRemove = amount / generator.ConversionFactor;
+              if (amountToRemove > availableAmount)
+              {
+                amount -= 1;
+                amountToRemove = amount / generator.ConversionFactor;
+              }
+
+              mainFactory.Remove(new ResourceCost(generator.ConvertFrom, amountToRemove));
+            }
+          }
+
+          mainFactory.Add(generator.ResourceType, amount);
         }
       }
     }

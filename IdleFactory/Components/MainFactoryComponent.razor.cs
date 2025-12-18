@@ -81,20 +81,23 @@ namespace IdleFactory.Components
 
     private IEnumerable<(MainFactoryUnlocks Unlock, string CostString, bool CanBuy)> GetVisibleUnlocks()
     {
-      foreach (var unlockType in this.GetAvailableUnlockTypes())
+      foreach (var availableUnlock in this.GetAvailableUnlockTypes())
       {
-        if (!this.MainFactory.Unlocks.Contains(unlockType))
+        if ((availableUnlock.IsAvailable || this.MainFactory.AvailableUnlocks.Contains(availableUnlock.UnlockType))
+          && !this.MainFactory.Unlocks.Contains(availableUnlock.UnlockType))
         {
-          var costs = unlockType.GetCosts();
-          yield return (unlockType, costs.ToCostString(), this.MainFactory.HasResources(costs));
+          this.MainFactory.AvailableUnlocks.Add(availableUnlock.UnlockType);
+          var costs = availableUnlock.UnlockType.GetCosts();
+          yield return (availableUnlock.UnlockType, costs.ToCostString(), this.MainFactory.HasResources(costs));
         }
       }
     }
 
-    private IEnumerable<MainFactoryUnlocks> GetAvailableUnlockTypes()
+    private IEnumerable<(MainFactoryUnlocks UnlockType, bool IsAvailable)> GetAvailableUnlockTypes()
     {
-      yield return MainFactoryUnlocks.RedGenerator2;
-      yield return MainFactoryUnlocks.FocusGenerator;
+      yield return (MainFactoryUnlocks.RedGenerator2, true);
+      yield return (MainFactoryUnlocks.FocusGenerator, true);
+      yield return (MainFactoryUnlocks.RedToBlue, this.MainFactory.HasResource(ResourceType.Red, 1200));
     }
   }
 }

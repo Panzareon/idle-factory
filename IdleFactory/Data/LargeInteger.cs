@@ -274,6 +274,11 @@ namespace IdleFactory.Data
       return Create(left.BaseValue * right, left.Exponent);
     }
 
+    public static LargeInteger operator /(LargeInteger left, double right)
+    {
+      return Create(left.BaseValue / right, left.Exponent);
+    }
+
     public override readonly int GetHashCode()
     {
       return HashCode.Combine(this.BaseValue, this.Exponent);

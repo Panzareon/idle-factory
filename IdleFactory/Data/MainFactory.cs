@@ -4,7 +4,9 @@ namespace IdleFactory.Data
 {
   public enum ResourceType
   {
+    Undefined = 0,
     Red = 1,
+    Blue = 2,
   }
 
   public class MainFactory
@@ -14,6 +16,7 @@ namespace IdleFactory.Data
     public IList<ResourceGenerator> ResourceGenerators { get; } = [];
 
     public IList<MainFactoryUnlocks> Unlocks { get; } = [];
+    public ISet<MainFactoryUnlocks> AvailableUnlocks { get; } = new HashSet<MainFactoryUnlocks>();
 
     public event EventHandler? PropertyChanged;
 
@@ -73,6 +76,16 @@ namespace IdleFactory.Data
       }
 
       return true;
+    }
+
+    public bool HasResource(ResourceType convertFrom, LargeInteger cost)
+    {
+      return this.Resources.TryGetValue(convertFrom, out var amount) && amount >= cost;
+    }
+
+    public LargeInteger GetResource(ResourceType convertFrom)
+    {
+      return this.Resources.TryGetValue(convertFrom, out var amount) ? amount : 0;
     }
   }
 }
