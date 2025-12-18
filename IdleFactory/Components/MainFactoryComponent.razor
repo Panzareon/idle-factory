@@ -57,3 +57,7 @@
 		<button class="btn btn-primary" @onclick="() => Unlock(visibleUnlock.Unlock)" disabled="@(!visibleUnlock.CanBuy)">@visibleUnlock.Unlock (@visibleUnlock.CostString)</button>
 	}
 </div>
+@if (AllowSkip)
+{
+	<button class="btn btn-primary" @onclick="() => MainFactory.Add(Data.ResourceType.Red, 2000)">Skip</button>
+}

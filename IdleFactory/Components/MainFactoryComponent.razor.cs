@@ -13,6 +13,18 @@ namespace IdleFactory.Components
 
     private bool IsFocusAvailable => this.MainFactory.Unlocks.Contains(MainFactoryUnlocks.FocusGenerator);
 
+    private bool AllowSkip
+    {
+      get
+      {
+#if DEBUG
+        return true;
+#else
+        return false;
+#endif
+      }
+    }
+
     public void Dispose()
     {
       this.MainFactory.PropertyChanged -= MainFactoryPropertyChanged;
