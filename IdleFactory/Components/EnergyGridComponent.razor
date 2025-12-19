@@ -1,0 +1,10 @@
+﻿<div class="grid" style="width:@(EnergyGrid.Width* GridSize)px;height:@(EnergyGrid.Height* GridSize)px;">
+	@for (var i = 1; i < EnergyGrid.Width; i++)
+	{
+		<div class="grid-line grid-column" style="left:@(i* GridSize)px"/>
+	}
+	@for (var i = 1; i < EnergyGrid.Height; i++)
+	{
+		<div class="grid-line grid-row" style="top:@(i* GridSize)px" />
+	}
+</div>

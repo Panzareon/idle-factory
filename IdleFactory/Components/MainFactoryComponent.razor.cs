@@ -7,7 +7,7 @@ namespace IdleFactory.Components
   public partial class MainFactoryComponent : IDisposable
   {
     [Inject]
-    public FactoryDataService FactoryDataService { get; set; }
+    public required FactoryDataService FactoryDataService { get; set; }
 
     public MainFactory MainFactory => this.FactoryDataService.Data.MainFactory;
 
@@ -88,7 +88,7 @@ namespace IdleFactory.Components
 
       this.MainFactory.Remove(costs);
       this.MainFactory.Unlocks.Add(unlock);
-      unlock.Apply(this.MainFactory);
+      unlock.Apply(this.MainFactory, this.FactoryDataService.Data);
     }
 
     private IEnumerable<(MainFactoryUnlocks Unlock, string CostString, bool CanBuy)> GetVisibleUnlocks()
