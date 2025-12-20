@@ -1,4 +1,4 @@
-using IdleFactory.Data;
+using IdleFactory.Data.Main;
 using IdleFactory.Services;
 using Microsoft.AspNetCore.Components;
 

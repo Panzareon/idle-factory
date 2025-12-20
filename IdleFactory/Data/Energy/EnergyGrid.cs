@@ -1,4 +1,4 @@
-﻿namespace IdleFactory.Data
+﻿namespace IdleFactory.Data.Energy
 {
   public class EnergyGrid
   {

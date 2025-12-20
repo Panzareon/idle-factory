@@ -1,4 +1,5 @@
-﻿<ul class="list-group list-group-horizontal">
+﻿@using IdleFactory.Data.Main
+<ul class="list-group list-group-horizontal">
 	@foreach (var resource in MainFactory.Resources)
 	{
 		<li class="list-group-item">
@@ -11,7 +12,7 @@
 {
 	<div class="card col-md-6 col-lg-4">
 		<div class="card-header">
-			@if (generator.ConvertFrom != Data.ResourceType.Undefined)
+			@if (generator.ConvertFrom != ResourceType.Undefined)
 			{
 				<input type="checkbox" @bind="generator.IsEnabled" autocomplete="off">
 			}
@@ -26,7 +27,7 @@
 			}
 		</div>
 		<div class="card-body">
-			@if (generator.ConvertFrom == Data.ResourceType.Undefined)
+			@if (generator.ConvertFrom == ResourceType.Undefined)
 			{
 				<span>+@generator.GenerationAmount.ToString(Constants.DefaultDisplayPrecision) @generator.ResourceType</span>
 			}
@@ -59,5 +60,5 @@
 </div>
 @if (AllowSkip)
 {
-	<button class="btn btn-primary" @onclick="() => MainFactory.Add(Data.ResourceType.Red, 2000)">Skip</button>
+	<button class="btn btn-primary" @onclick="() => MainFactory.Add(ResourceType.Red, 2000)">Skip</button>
 }

@@ -1,4 +1,5 @@
 ﻿using IdleFactory.Data;
+using IdleFactory.Data.Main;
 using System.Diagnostics;
 
 namespace IdleFactory.Services

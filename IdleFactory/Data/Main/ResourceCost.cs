@@ -1,4 +1,4 @@
-﻿namespace IdleFactory.Data
+﻿namespace IdleFactory.Data.Main
 {
   public record ResourceCost(ResourceType ResourceType, LargeInteger Amount);
 

@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace IdleFactory.Data
+namespace IdleFactory.Data.Main
 {
   public enum ResourceType
   {

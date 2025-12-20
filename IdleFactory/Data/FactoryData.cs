@@ -1,4 +1,7 @@
-﻿namespace IdleFactory.Data
+﻿using IdleFactory.Data.Energy;
+using IdleFactory.Data.Main;
+
+namespace IdleFactory.Data
 {
 	public class FactoryData
 	{
