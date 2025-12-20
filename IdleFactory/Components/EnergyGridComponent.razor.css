@@ -53,3 +53,22 @@
 .grid-item-laser-emitter {
 	background-color: orange;
 }
+
+.grid-item-mirror {
+	background-color: lightgray;
+}
+
+.mirror {
+	--height: 2px;
+	height: var(--height);
+	background-color: black;
+	margin-top: calc(50% - var(--height)/2);
+}
+
+.mirror-positive {
+	rotate: -45deg;
+}
+
+.mirror-negative {
+	rotate: 45deg;
+}

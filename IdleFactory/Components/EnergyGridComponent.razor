@@ -1,4 +1,5 @@
-﻿<div class="grid" style="width:@(EnergyGrid.Width* GridSize)px;height:@(EnergyGrid.Height* GridSize)px;">
+﻿@using IdleFactory.Data.Energy
+<div class="grid" style="width:@(EnergyGrid.Width* GridSize)px;height:@(EnergyGrid.Height* GridSize)px;">
 	@for (var i = 1; i < EnergyGrid.Width; i++)
 	{
 		<div class="grid-line grid-column" style="left:@(i* GridSize)px"/>
@@ -11,33 +12,31 @@
 	{
 		<div class="grid-item-wrapper" style="left:@(item.Position.X * GridSize)px;top:@(item.Position.Y*GridSize)px">
 			<div class="grid-item @GetClassName(item)">
-
+				@switch (item)
+				{
+					case Mirror mirror:
+						@if (mirror.PositiveDirection)
+						{
+							<div class="mirror mirror-positive"/>
+						}
+						else
+						{
+							<div class="mirror mirror-negative" />
+						}
+						break;
+				}
 			</div>
 		</div>
 	}
 	@foreach (var laser in EnergyGrid.CalculatedLaser)
 	{
-		@if (laser.From.X == laser.To.X)
+		@if (laser.Direction.X == 0)
 		{
-			@if (laser.From.Y < laser.To.Y)
-			{
-				<div class="laser laser-vertical" style="left:@(laser.From.X* GridSize + GridSize/2)px; top:@(laser.From.Y* GridSize + GridSize/2)px; height:@(laser.GetLength()*GridSize)px" />
-			}
-			else
-			{
-				<div class="laser laser-vertical" style="left:@(laser.From.X* GridSize + GridSize/2)px; top:@(laser.To.Y* GridSize + GridSize/2)px; height:@(laser.GetLength() * GridSize)px" />
-			}
+			<div class="laser laser-vertical" style="left:@(GetStartPositionX(laser) * GridSize)px; top:@(GetStartPositionY(laser) * GridSize)px; height:@(GetLength(laser) * GridSize)px" />
 		}
 		else
 		{
-			@if (laser.From.X < laser.To.X)
-			{
-				<div class="laser laser-horizontal" style="left:@(laser.From.X* GridSize + GridSize/2)px; top:@(laser.From.Y* GridSize + GridSize/2)px; width:@(laser.GetLength() * GridSize)px" />
-			}
-			else
-			{
-				<div class="laser laser-horizontal" style="left:@(laser.To.X* GridSize + GridSize/2)px; top:@(laser.From.Y* GridSize + GridSize/2)px; width:@(laser.GetLength() * GridSize)px" />
-			}
+			<div class="laser laser-horizontal" style="left:@(GetStartPositionX(laser) * GridSize)px; top:@(GetStartPositionY(laser) * GridSize)px; width:@(GetLength(laser) * GridSize)px" />
 		}
 	}
 </div>

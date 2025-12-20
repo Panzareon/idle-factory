@@ -23,6 +23,7 @@ namespace IdleFactory.Services
       factoryDataService.Data.MainFactory.Resources.Add(ResourceType.Red, 0);
       factoryDataService.Data.EnergyGrid.AddGridItem(new LaserEmitter { Direction = new Vector2(0, 1), Position = new Vector2(0, 0) });
       factoryDataService.Data.EnergyGrid.AddGridItem(new LaserEmitter { Direction = new Vector2(0, 1), Position = new Vector2(1, 0), MaxDistance = 5 });
+      factoryDataService.Data.EnergyGrid.AddGridItem(new Mirror { Position = new Vector2(0, 1), PositiveDirection = true });
       this.stopwatch.Start();
       this.timer = new Timer(this.OnTimerTick, null, TimeSpan.Zero, targetTickTime);
     }

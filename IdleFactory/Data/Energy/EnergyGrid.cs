@@ -39,19 +39,34 @@ namespace IdleFactory.Data.Energy
     {
       var currentDirection = laserEmitter.Direction;
       var currentPosition = laserEmitter.Position;
-      var currentLaser = new Laser(currentPosition, currentPosition, false, laserEmitter.LaserStrength);
+      var currentLaser = new Laser(currentDirection, currentPosition, currentPosition, false, laserEmitter.LaserStrength);
       for (var i = 0; i < laserEmitter.MaxDistance; i++)
       {
         var nextPosition = currentPosition + currentDirection;
-        if (!IsFree(nextPosition))
+        var (isFree, item) = Check(nextPosition);
+        if (!isFree)
         {
-          currentLaser = currentLaser with
+          switch (item)
           {
-            To = currentPosition,
-            HitTarget = true,
-          };
-          this.CalculatedLaser.Add(currentLaser);
-          return;
+            case Mirror mirror:
+              this.CalculatedLaser.Add(currentLaser with
+              {
+                To = nextPosition,
+              });
+              currentDirection = mirror.PositiveDirection
+                ? new Vector2(-currentDirection.Y, -currentDirection.X)
+                : new Vector2(currentDirection.Y, currentDirection.X);
+              currentLaser = new Laser(currentDirection, nextPosition, nextPosition, false, currentLaser.Strength);
+              break;
+            default:
+              currentLaser = currentLaser with
+              {
+                To = currentPosition,
+                HitTarget = true,
+              };
+              this.CalculatedLaser.Add(currentLaser);
+              return;
+          }
         }
 
         currentPosition = nextPosition;
@@ -61,14 +76,15 @@ namespace IdleFactory.Data.Energy
       this.CalculatedLaser.Add(currentLaser);
     }
 
-    private bool IsFree(Vector2 nextPosition)
+    private (bool IsFree, GridItem? Item) Check(Vector2 nextPosition)
     {
       if (nextPosition.X < 0 || nextPosition.X >= this.Width || nextPosition.Y < 0 || nextPosition.Y >= this.Height)
       {
-        return false;
+        return (false, null);
       }
 
-      return !this.Items.Any(x => x.Position == nextPosition);
+      var item = this.Items.FirstOrDefault(x => x.Position == nextPosition);
+      return (item == null, item);
     }
   }
 }
