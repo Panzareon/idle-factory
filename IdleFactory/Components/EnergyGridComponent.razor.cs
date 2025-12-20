@@ -15,5 +15,16 @@ namespace IdleFactory.Components
     public required FactoryDataService FactoryDataService { get; set; }
 
     private EnergyGrid EnergyGrid => this.FactoryDataService.Data.EnergyGrid;
+
+    private string GetClassName(GridItem gridItem)
+    {
+      var specificClassName = gridItem switch
+      {
+        LaserEmitter => "laser-emitter",
+        _ => "default"
+      };
+
+      return $"grid-item-{specificClassName}";
+    }
   }
 }

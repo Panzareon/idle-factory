@@ -27,8 +27,29 @@
 
 .laser-horizontal {
 	height: 5px;
+	margin-top: -2.5px;
 }
 
 .laser-vertical {
 	width: 5px;
+	margin-left: -2.5px;
+}
+
+.grid-item-wrapper {
+	position: absolute;
+	--grid-item-size: 30px;
+	width: var(--grid-item-size);
+	height: var(--grid-item-size);
+}
+
+.grid-item {
+	--child-margin: 4px;
+	margin: var(--child-margin);
+	border: 1px solid gray;
+	border-radius: 5px;
+	height: calc(100% - 2*var(--child-margin));
+}
+
+.grid-item-laser-emitter {
+	background-color: orange;
 }

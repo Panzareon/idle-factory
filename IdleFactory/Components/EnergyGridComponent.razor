@@ -7,6 +7,14 @@
 	{
 		<div class="grid-line grid-row" style="top:@(i* GridSize)px" />
 	}
+	@foreach (var item in EnergyGrid.Items)
+	{
+		<div class="grid-item-wrapper" style="left:@(item.Position.X * GridSize)px;top:@(item.Position.Y*GridSize)px">
+			<div class="grid-item @GetClassName(item)">
+
+			</div>
+		</div>
+	}
 	@foreach (var laser in EnergyGrid.CalculatedLaser)
 	{
 		@if (laser.From.X == laser.To.X)
