@@ -69,6 +69,12 @@ namespace IdleFactory.Components
 
     private void SelectGridItem(MouseEventArgs e, GridItem gridItem)
     {
+      if (e.ShiftKey || e.Detail >= 2)
+      {
+        this.Rotate(gridItem);
+        return;
+      }
+
       if (this.SelectedItem == gridItem)
       {
         this.SelectedItem = null;
@@ -76,6 +82,37 @@ namespace IdleFactory.Components
       else
       {
         this.SelectedItem = gridItem;
+      }
+    }
+
+    private void Rotate(GridItem selectedItem)
+    {
+      switch (selectedItem)
+      {
+        case Mirror mirror:
+          mirror.PositiveDirection = !mirror.PositiveDirection;
+          this.EnergyGrid.RecalculateLaser();
+          break;
+        case LaserEmitter laserEmitter:
+          if (laserEmitter.Direction.X > 0)
+          {
+            laserEmitter.Direction = new Vector2(0, 1);
+          }
+          else if (laserEmitter.Direction.Y > 0)
+          {
+            laserEmitter.Direction = new Vector2(-1, 0);
+          }
+          else if (laserEmitter.Direction.X < 0)
+          {
+            laserEmitter.Direction = new Vector2(0, -1);
+          }
+          else
+          {
+            laserEmitter.Direction = new Vector2(1, 0);
+          }
+
+          this.EnergyGrid.RecalculateLaser();
+          break;
       }
     }
 
