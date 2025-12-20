@@ -20,10 +20,14 @@
 }
 
 .laser {
-	background-color: red;
 	position: absolute;
-	filter: blur(2px);
 	pointer-events: none;
+}
+
+.laser-beam {
+	background-color: red;
+	filter: blur(2px);
+	height: 100%;
 }
 
 .laser-horizontal {
@@ -34,6 +38,45 @@
 .laser-vertical {
 	width: 5px;
 	margin-left: -2.5px;
+}
+
+.laser-hit {
+	filter: blur(1px);
+	--hit-radius: 6px;
+	background-color: red;
+	position: absolute;
+}
+
+.laser-hit-down {
+	width: calc(var(--hit-radius) * 2);
+	height: var(--hit-radius);
+	border-radius: var(--hit-radius) var(--hit-radius) 0 0;
+	bottom: 0;
+	margin-left: calc(2.5px - var(--hit-radius))
+}
+
+.laser-hit-up {
+	width: calc(var(--hit-radius) * 2);
+	height: var(--hit-radius);
+	border-radius: 0 0 var(--hit-radius) var(--hit-radius);
+	top: 0;
+	margin-left: calc(2.5px - var(--hit-radius))
+}
+
+.laser-hit-right {
+	height: calc(var(--hit-radius) * 2);
+	width: var(--hit-radius);
+	border-radius: var(--hit-radius) 0 0 var(--hit-radius);
+	right: 0;
+	margin-top: calc(2.5px - var(--hit-radius))
+}
+
+.laser-hit-left {
+	height: calc(var(--hit-radius) * 2);
+	width: var(--hit-radius);
+	border-radius: 0 var(--hit-radius) var(--hit-radius) 0;
+	left: 0;
+	margin-top: calc(2.5px - var(--hit-radius))
 }
 
 .grid-item-wrapper {
