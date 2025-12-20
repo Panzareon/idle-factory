@@ -1,6 +1,7 @@
 using IdleFactory.Data.Energy;
 using IdleFactory.Services;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 
 namespace IdleFactory.Components
 {
@@ -13,6 +14,8 @@ namespace IdleFactory.Components
 
     [Inject]
     public required FactoryDataService FactoryDataService { get; set; }
+
+    public GridItem? SelectedItem { get; set; }
 
     private EnergyGrid EnergyGrid => this.FactoryDataService.Data.EnergyGrid;
 
@@ -31,12 +34,7 @@ namespace IdleFactory.Components
     {
       var baseLength = MathF.Abs(laser.From.X == laser.To.X ? laser.From.Y - laser.To.Y : laser.From.X - laser.To.X);
 
-      if (laser.HitTarget)
-      {
-        return baseLength + 0.5f;
-      }
-
-      return baseLength;
+      return baseLength + laser.HitTargetDistance;
     }
 
     private static float GetStartPositionX(Laser laser)
@@ -48,12 +46,7 @@ namespace IdleFactory.Components
 
       if (laser.Direction.X < 0)
       {
-        if (laser.HitTarget)
-        {
-          return laser.To.X;
-        }
-
-        return laser.To.X + 0.5f;
+        return laser.To.X + 0.5f - laser.HitTargetDistance;
       }
 
       return laser.From.X + 0.5f;
@@ -68,15 +61,38 @@ namespace IdleFactory.Components
 
       if (laser.Direction.Y < 0)
       {
-        if (laser.HitTarget)
-        {
-          return laser.To.Y;
-        }
-
-        return laser.To.Y + 0.5f;
+        return laser.To.Y + 0.5f - laser.HitTargetDistance;
       }
 
       return laser.From.Y + 0.5f;
+    }
+
+    private void SelectGridItem(MouseEventArgs e, GridItem gridItem)
+    {
+      if (this.SelectedItem == gridItem)
+      {
+        this.SelectedItem = null;
+      }
+      else
+      {
+        this.SelectedItem = gridItem;
+      }
+    }
+
+    private void SelectGrid(MouseEventArgs e)
+    {
+      if (this.SelectedItem == null)
+      {
+        return;
+      }
+
+      var position = new Vector2((int)(e.OffsetX / GridSize), (int)(e.OffsetY / GridSize));
+      if (this.EnergyGrid.Check(position).IsFree)
+      {
+        this.SelectedItem.Position = position;
+        this.EnergyGrid.RecalculateLaser();
+        this.SelectedItem = null;
+      }
     }
   }
 }

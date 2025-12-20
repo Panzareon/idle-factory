@@ -1,16 +1,16 @@
 ﻿@using IdleFactory.Data.Energy
-<div class="grid" style="width:@(EnergyGrid.Width* GridSize)px;height:@(EnergyGrid.Height* GridSize)px;">
+<div class="grid" style="width:@(EnergyGrid.Width* GridSize + 1)px;height:@(EnergyGrid.Height* GridSize + 1)px;" @onclick="SelectGrid">
 	@for (var i = 1; i < EnergyGrid.Width; i++)
 	{
-		<div class="grid-line grid-column" style="left:@(i* GridSize)px"/>
+		<div class="grid-line grid-column" style="left:@(i* GridSize - 1)px"/>
 	}
 	@for (var i = 1; i < EnergyGrid.Height; i++)
 	{
-		<div class="grid-line grid-row" style="top:@(i* GridSize)px" />
+		<div class="grid-line grid-row" style="top:@(i* GridSize - 1)px" />
 	}
 	@foreach (var item in EnergyGrid.Items)
 	{
-		<div class="grid-item-wrapper" style="left:@(item.Position.X * GridSize)px;top:@(item.Position.Y*GridSize)px">
+		<div class="grid-item-wrapper @(SelectedItem == item ? "selected" : "")" style="left:@(item.Position.X* GridSize)px;top:@(item.Position.Y* GridSize)px" @onclick="e => SelectGridItem(e, item)" @onclick:stopPropagation="true">
 			<div class="grid-item @GetClassName(item)">
 				@switch (item)
 				{

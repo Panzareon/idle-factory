@@ -26,7 +26,7 @@ namespace IdleFactory.Data.Energy
       this.RecalculateLaser();
     }
 
-    private void RecalculateLaser()
+    public void RecalculateLaser()
     {
       this.CalculatedLaser.Clear();
       foreach (var laserEmitter in this.Items.OfType<LaserEmitter>())
@@ -39,7 +39,7 @@ namespace IdleFactory.Data.Energy
     {
       var currentDirection = laserEmitter.Direction;
       var currentPosition = laserEmitter.Position;
-      var currentLaser = new Laser(currentDirection, currentPosition, currentPosition, false, laserEmitter.LaserStrength);
+      var currentLaser = new Laser(currentDirection, currentPosition, currentPosition, 0, laserEmitter.LaserStrength);
       for (var i = 0; i < laserEmitter.MaxDistance; i++)
       {
         var nextPosition = currentPosition + currentDirection;
@@ -56,13 +56,13 @@ namespace IdleFactory.Data.Energy
               currentDirection = mirror.PositiveDirection
                 ? new Vector2(-currentDirection.Y, -currentDirection.X)
                 : new Vector2(currentDirection.Y, currentDirection.X);
-              currentLaser = new Laser(currentDirection, nextPosition, nextPosition, false, currentLaser.Strength);
+              currentLaser = new Laser(currentDirection, nextPosition, nextPosition, 0, currentLaser.Strength);
               break;
             default:
               currentLaser = currentLaser with
               {
                 To = currentPosition,
-                HitTarget = true,
+                HitTargetDistance = item == null ? 0.5f : 0.7f,
               };
               this.CalculatedLaser.Add(currentLaser);
               return;
@@ -76,7 +76,7 @@ namespace IdleFactory.Data.Energy
       this.CalculatedLaser.Add(currentLaser);
     }
 
-    private (bool IsFree, GridItem? Item) Check(Vector2 nextPosition)
+    public (bool IsFree, GridItem? Item) Check(Vector2 nextPosition)
     {
       if (nextPosition.X < 0 || nextPosition.X >= this.Width || nextPosition.Y < 0 || nextPosition.Y >= this.Height)
       {

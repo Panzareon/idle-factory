@@ -23,6 +23,7 @@
 	background-color: red;
 	position: absolute;
 	filter: blur(2px);
+	pointer-events: none;
 }
 
 .laser-horizontal {
@@ -37,9 +38,14 @@
 
 .grid-item-wrapper {
 	position: absolute;
-	--grid-item-size: 30px;
+	--grid-item-size: 29px;
 	width: var(--grid-item-size);
 	height: var(--grid-item-size);
+}
+
+.grid-item-wrapper.selected {
+	border: 1px solid red;
+	background-color: yellow;
 }
 
 .grid-item {
