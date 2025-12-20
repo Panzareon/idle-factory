@@ -7,4 +7,29 @@
 	{
 		<div class="grid-line grid-row" style="top:@(i* GridSize)px" />
 	}
+	@foreach (var laser in EnergyGrid.CalculatedLaser)
+	{
+		@if (laser.From.X == laser.To.X)
+		{
+			@if (laser.From.Y < laser.To.Y)
+			{
+				<div class="laser laser-vertical" style="left:@(laser.From.X* GridSize + GridSize/2)px; top:@(laser.From.Y* GridSize + GridSize/2)px; height:@(laser.GetLength()*GridSize)px" />
+			}
+			else
+			{
+				<div class="laser laser-vertical" style="left:@(laser.From.X* GridSize + GridSize/2)px; top:@(laser.To.Y* GridSize + GridSize/2)px; height:@(laser.GetLength() * GridSize)px" />
+			}
+		}
+		else
+		{
+			@if (laser.From.X < laser.To.X)
+			{
+				<div class="laser laser-horizontal" style="left:@(laser.From.X* GridSize + GridSize/2)px; top:@(laser.From.Y* GridSize + GridSize/2)px; width:@(laser.GetLength() * GridSize)px" />
+			}
+			else
+			{
+				<div class="laser laser-horizontal" style="left:@(laser.To.X* GridSize + GridSize/2)px; top:@(laser.From.Y* GridSize + GridSize/2)px; width:@(laser.GetLength() * GridSize)px" />
+			}
+		}
+	}
 </div>

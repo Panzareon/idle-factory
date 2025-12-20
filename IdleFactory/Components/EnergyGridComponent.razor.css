@@ -18,3 +18,17 @@
 	height: 1px;
 	width: 100%;
 }
+
+.laser {
+	background-color: red;
+	position: absolute;
+	filter: blur(2px);
+}
+
+.laser-horizontal {
+	height: 5px;
+}
+
+.laser-vertical {
+	width: 5px;
+}

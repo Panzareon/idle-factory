@@ -1,4 +1,5 @@
 ﻿using IdleFactory.Data;
+using IdleFactory.Data.Energy;
 using IdleFactory.Data.Main;
 using System.Diagnostics;
 
@@ -20,6 +21,8 @@ namespace IdleFactory.Services
 
       factoryDataService.Data.MainFactory.ResourceGenerators.Add(new ResourceGenerator { ResourceType = ResourceType.Red, GenerationAmount = 1, GenerationTime = 1 });
       factoryDataService.Data.MainFactory.Resources.Add(ResourceType.Red, 0);
+      factoryDataService.Data.EnergyGrid.AddGridItem(new LaserEmitter { Direction = new Vector2(0, 1), Position = new Vector2(0, 0) });
+      factoryDataService.Data.EnergyGrid.AddGridItem(new LaserEmitter { Direction = new Vector2(0, 1), Position = new Vector2(1, 0), MaxDistance = 5 });
       this.stopwatch.Start();
       this.timer = new Timer(this.OnTimerTick, null, TimeSpan.Zero, targetTickTime);
     }
