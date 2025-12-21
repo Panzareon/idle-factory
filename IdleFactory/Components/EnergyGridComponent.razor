@@ -11,21 +11,7 @@
 	@foreach (var item in EnergyGrid.Items)
 	{
 		<div class="grid-item-wrapper @(SelectedItem == item ? "selected" : "")" style="left:@(item.Position.X* GridSize)px;top:@(item.Position.Y* GridSize)px" @onclick="e => SelectGridItem(e, item)" @onclick:stopPropagation="true">
-			<div class="grid-item @GetClassName(item)">
-				@switch (item)
-				{
-					case Mirror mirror:
-						@if (mirror.PositiveDirection)
-						{
-							<div class="mirror mirror-positive"/>
-						}
-						else
-						{
-							<div class="mirror mirror-negative" />
-						}
-						break;
-				}
-			</div>
+		  <EnergyGridItem Item="item"/>
 		</div>
 	}
 	@foreach (var laser in EnergyGrid.CalculatedLaser)
@@ -51,4 +37,15 @@
 			</div>
 		}
 	}
+</div>
+
+<div class="grid-item-container" @onclick="SelectNotPlacedItems">
+	@foreach(var item in EnergyGrid.NotPlacedItems)
+	{
+		<div class="grid-item-wrapper @(SelectedItem == item ? "selected" : "")" @onclick="e => SelectGridItem(e, item)" @onclick:stopPropagation="true">
+			<EnergyGridItem Item="item" />
+		</div>
+	}
+
+	<div class="grid-item-wrapper"/>
 </div>

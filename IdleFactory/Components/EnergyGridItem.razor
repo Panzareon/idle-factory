@@ -1,0 +1,16 @@
+﻿@using IdleFactory.Data.Energy
+<div class="grid-item @GetClassName()">
+	@switch (Item)
+	{
+		case Mirror mirror:
+			@if (mirror.PositiveDirection)
+			{
+				<div class="mirror mirror-positive" />
+			}
+			else
+			{
+				<div class="mirror mirror-negative" />
+			}
+			break;
+	}
+</div>

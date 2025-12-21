@@ -14,15 +14,21 @@ namespace IdleFactory.Data.Energy
 
     public List<GridItem> Items { get; } = [];
 
+    public List<GridItem> NotPlacedItems { get; } = [];
+
     public void AddGridItem(GridItem item)
     {
       this.Items.Add(item);
+      item.PlacedInGrid = true;
+      this.NotPlacedItems.Remove(item);
       this.RecalculateLaser();
     }
 
     public void RemoveGridItem(GridItem item)
     {
       this.Items.Remove(item);
+      item.PlacedInGrid = false;
+      this.NotPlacedItems.Add(item);
       this.RecalculateLaser();
     }
 

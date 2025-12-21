@@ -19,17 +19,6 @@ namespace IdleFactory.Components
 
     private EnergyGrid EnergyGrid => this.FactoryDataService.Data.EnergyGrid;
 
-    private string GetClassName(GridItem gridItem)
-    {
-      var specificClassName = gridItem switch
-      {
-        LaserEmitter => "laser-emitter",
-        Mirror => "mirror",
-        _ => "default"
-      };
-
-      return $"grid-item-{specificClassName}";
-    }
     private static float GetLength(Laser laser)
     {
       var baseLength = MathF.Abs(laser.From.X == laser.To.X ? laser.From.Y - laser.To.Y : laser.From.X - laser.To.X);
@@ -69,6 +58,12 @@ namespace IdleFactory.Components
 
     private void SelectGridItem(MouseEventArgs e, GridItem gridItem)
     {
+      if (this.SelectedItem?.PlacedInGrid == true && !gridItem.PlacedInGrid)
+      {
+        this.SelectNotPlacedItems();
+        return;
+      }
+
       if (e.ShiftKey || e.Detail >= 2)
       {
         this.Rotate(gridItem);
@@ -127,9 +122,28 @@ namespace IdleFactory.Components
       if (this.EnergyGrid.Check(position).IsFree)
       {
         this.SelectedItem.Position = position;
-        this.EnergyGrid.RecalculateLaser();
+        if (this.SelectedItem.PlacedInGrid)
+        {
+          this.EnergyGrid.RecalculateLaser();
+        }
+        else
+        {
+          this.EnergyGrid.AddGridItem(this.SelectedItem);
+        }
+        
         this.SelectedItem = null;
       }
+    }
+
+    private void SelectNotPlacedItems()
+    {
+      if (this.SelectedItem == null || !this.SelectedItem.PlacedInGrid)
+      {
+        return;
+      }
+
+      this.EnergyGrid.RemoveGridItem(this.SelectedItem);
+      this.SelectedItem = null;
     }
   }
 }
