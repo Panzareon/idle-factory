@@ -1,5 +1,6 @@
 ﻿
 
+
 namespace IdleFactory.Data.Energy
 {
   public class EnergyGrid
@@ -10,11 +11,20 @@ namespace IdleFactory.Data.Energy
 
     public int Height { get; set; } = 4;
 
+    public float ToNextLaserCalc { get; set; }
+
+    /// <summary>
+    /// Gets or sets the time in seconds to the next laser hit.
+    /// </summary>
+    public float LaserTime { get; set; } = 0.05f;
+
     public List<Laser> CalculatedLaser { get; } = [];
 
     public List<GridItem> Items { get; } = [];
 
     public List<GridItem> NotPlacedItems { get; } = [];
+
+    public event EventHandler? PropertyChanged;
 
     public void AddGridItem(GridItem item)
     {
@@ -91,6 +101,11 @@ namespace IdleFactory.Data.Energy
 
       var item = this.Items.FirstOrDefault(x => x.Position == nextPosition);
       return (item == null, item);
+    }
+
+    public void RaisePropertyChanged()
+    {
+      this.PropertyChanged?.Invoke(this, EventArgs.Empty);
     }
   }
 }

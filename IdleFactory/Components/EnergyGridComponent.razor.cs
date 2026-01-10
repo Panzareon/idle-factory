@@ -19,6 +19,22 @@ namespace IdleFactory.Components
 
     private EnergyGrid EnergyGrid => this.FactoryDataService.Data.EnergyGrid;
 
+    public void Dispose()
+    {
+      this.EnergyGrid.PropertyChanged -= this.EnergyGridPropertyChanged;
+    }
+
+    protected override void OnInitialized()
+    {
+      base.OnInitialized();
+      this.EnergyGrid.PropertyChanged += this.EnergyGridPropertyChanged;
+    }
+
+    private void EnergyGridPropertyChanged(object? sender, EventArgs e)
+    {
+      this.StateHasChanged();
+    }
+
     private static float GetLength(Laser laser)
     {
       var baseLength = MathF.Abs(laser.From.X == laser.To.X ? laser.From.Y - laser.To.Y : laser.From.X - laser.To.X);

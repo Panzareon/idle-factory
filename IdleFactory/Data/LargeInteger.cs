@@ -206,6 +206,11 @@ namespace IdleFactory.Data
       return Create(value, 0);
     }
 
+    public static implicit operator double(LargeInteger value)
+    {
+      return value.BaseValue * ExponentValues[value.Exponent];
+    }
+
     public static LargeInteger operator +(LargeInteger left, LargeInteger right)
     {
       if (left.Exponent < right.Exponent)
@@ -272,6 +277,11 @@ namespace IdleFactory.Data
     public static LargeInteger operator *(LargeInteger left, double right)
     {
       return Create(left.BaseValue * right, left.Exponent);
+    }
+
+    public static LargeInteger operator /(LargeInteger left, LargeInteger right)
+    {
+      return Create(left.BaseValue / right.BaseValue, left.Exponent - right.Exponent);
     }
 
     public static LargeInteger operator /(LargeInteger left, double right)

@@ -21,8 +21,8 @@ namespace IdleFactory.Services
 
       factoryDataService.Data.MainFactory.ResourceGenerators.Add(new ResourceGenerator { ResourceType = ResourceType.Red, GenerationAmount = 1, GenerationTime = 1 });
       factoryDataService.Data.MainFactory.Resources.Add(ResourceType.Red, 0);
-      factoryDataService.Data.EnergyGrid.AddGridItem(new LaserEmitter { Direction = new Vector2(0, 1), Position = new Vector2(0, 0) });
-      factoryDataService.Data.EnergyGrid.AddGridItem(new LaserEmitter { Direction = new Vector2(0, 1), Position = new Vector2(1, 0), MaxDistance = 5 });
+      factoryDataService.Data.EnergyGrid.AddGridItem(new LaserEmitter { Direction = new Vector2(0, 1), Position = new Vector2(0, 0), LaserStrength = 1 });
+      factoryDataService.Data.EnergyGrid.AddGridItem(new UnpoweredItem { RequiredPower = 50, Position = new Vector2(1, 0), BuildTarget = new LaserEmitter { Direction = new Vector2(0, 1), Position = new Vector2(0, 0), MaxDistance = 5, LaserStrength = 1 } });
       factoryDataService.Data.EnergyGrid.AddGridItem(new Mirror { Position = new Vector2(0, 1), PositiveDirection = true });
       this.stopwatch.Start();
       this.timer = new Timer(this.OnTimerTick, null, TimeSpan.Zero, targetTickTime);
@@ -42,6 +42,7 @@ namespace IdleFactory.Services
     public void GameTick(float deltaTime)
     {
       this.GameTick(factoryDataService.Data.MainFactory, deltaTime);
+      this.GameTick(factoryDataService.Data.EnergyGrid, deltaTime);
 
       factoryDataService.Data.AfterGameTick();
     }
@@ -96,6 +97,59 @@ namespace IdleFactory.Services
 
           mainFactory.Add(generator.ResourceType, amount);
         }
+      }
+    }
+
+    private void GameTick(EnergyGrid energyGrid, float deltaTime)
+    {
+      energyGrid.ToNextLaserCalc += deltaTime;
+      if (energyGrid.ToNextLaserCalc < energyGrid.LaserTime)
+      {
+        return;
+      }
+
+      var hasChanged = false;
+      var numberOfLasers = MathF.Floor(energyGrid.ToNextLaserCalc / energyGrid.LaserTime);
+      energyGrid.ToNextLaserCalc -= numberOfLasers * energyGrid.LaserTime;
+      foreach (var laser in energyGrid.CalculatedLaser)
+      {
+        if (laser.HitTargetDistance == 0)
+        {
+          // Nothing was hit
+          continue;
+        }
+
+        var targetPosition = laser.To + laser.Direction;
+        var target = energyGrid.Items.FirstOrDefault(x => x.Position == targetPosition);
+        if (target == null)
+        {
+          // Hit the wall instead of an item
+          continue;
+        }
+
+        if (target is IPowerSinkGridItem powerSink)
+        {
+          powerSink.HitByLaser(laser.Strength, numberOfLasers);
+          hasChanged = true;
+        }
+      }
+
+      foreach (var gridItem in energyGrid.Items.ToList())
+      {
+        if (gridItem is UnpoweredItem unpoweredItem && unpoweredItem.Power >= unpoweredItem.RequiredPower)
+        {
+          // Remove without adding to the not placed items
+          energyGrid.Items.Remove(unpoweredItem);
+
+          unpoweredItem.BuildTarget.Position = unpoweredItem.Position;
+          energyGrid.AddGridItem(unpoweredItem.BuildTarget);
+          hasChanged = true;
+        }
+      }
+
+      if (hasChanged)
+      {
+        energyGrid.RaisePropertyChanged();
       }
     }
 

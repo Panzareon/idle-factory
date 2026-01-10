@@ -28,3 +28,15 @@
 .mirror-negative {
 	rotate: 45deg;
 }
+
+.grid-item-unpowered-item {
+	position: relative;
+	overflow: hidden;
+}
+
+.grid-item-unpowered-item .fill-amount {
+	background-color: red;
+	position:absolute;
+	bottom: 0;
+	width: 100%;
+}
