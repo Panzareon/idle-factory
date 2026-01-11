@@ -4,6 +4,6 @@
   {
     public bool PlacedInGrid { get; set; }
 
-    public required Vector2 Position { get; set; }
+    public Vector2 Position { get; set; } = new Vector2(0, 0);
   }
 }

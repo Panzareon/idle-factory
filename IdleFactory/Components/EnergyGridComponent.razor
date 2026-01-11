@@ -49,3 +49,14 @@
 
 	<div class="grid-item-wrapper"/>
 </div>
+Build:
+<div class="grid-item-container" @onclick="SelectNotPlacedItems">
+	@foreach(var item in EnergyGrid.BuildableItems)
+	{
+		<div class="grid-item-wrapper @(SelectedItem == item.PreviewItem ? "selected" : "")" @onclick="e => SelectGridItem(e, item.PreviewItem)" @onclick:stopPropagation="true">
+			<EnergyGridItem Item="item.PreviewItem" />
+		</div>
+	}
+
+	<div class="grid-item-wrapper"/>
+</div>

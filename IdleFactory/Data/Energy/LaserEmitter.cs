@@ -4,7 +4,7 @@
   {
     public required Vector2 Direction { get; set; }
 
-    public LargeInteger LaserStrength { get; set; }
+    public required LargeInteger LaserStrength { get; set; }
 
     public int MaxDistance { get; set; } = 2;
   }

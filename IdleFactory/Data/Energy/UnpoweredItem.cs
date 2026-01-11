@@ -11,6 +11,11 @@
     /// </summary>
     public required GridItem BuildTarget { get; init; }
 
+    /// <summary>
+    /// Gets the buildable item, from which this was created.
+    /// </summary>
+    public required BuildableItem BuildableItem { get; set; }
+
     public void HitByLaser(LargeInteger strength, float numberOfHits)
     {
       this.Power += strength * numberOfHits;

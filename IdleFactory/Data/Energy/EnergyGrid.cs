@@ -24,6 +24,8 @@ namespace IdleFactory.Data.Energy
 
     public List<GridItem> NotPlacedItems { get; } = [];
 
+    public List<BuildableItem> BuildableItems { get; } = [];
+
     public event EventHandler? PropertyChanged;
 
     public void AddGridItem(GridItem item)

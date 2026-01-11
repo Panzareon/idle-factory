@@ -80,7 +80,7 @@ namespace IdleFactory.Components
         return;
       }
 
-      if (e.ShiftKey || e.Detail >= 2)
+      if ((e.ShiftKey || e.Detail >= 2) && this.EnergyGrid.BuildableItems.FirstOrDefault(x => x.PreviewItem == gridItem) == null)
       {
         this.Rotate(gridItem);
         return;
@@ -144,7 +144,17 @@ namespace IdleFactory.Components
         }
         else
         {
-          this.EnergyGrid.AddGridItem(this.SelectedItem);
+          var buildableItem = this.EnergyGrid.BuildableItems.FirstOrDefault(x => x.PreviewItem == this.SelectedItem);
+          if (buildableItem == null)
+          {
+            this.EnergyGrid.AddGridItem(this.SelectedItem);
+          }
+          else
+          {
+            var unpoweredItem = buildableItem.BuildItem();
+            unpoweredItem.Position = position;
+            this.EnergyGrid.AddGridItem(unpoweredItem);
+          }
         }
         
         this.SelectedItem = null;

@@ -1,0 +1,78 @@
+﻿
+namespace IdleFactory.Data.Energy
+{
+  public enum BuildableItemType
+  {
+    LaserEmitter,
+    Mirror,
+  }
+
+  public class BuildableItem
+  {
+    public BuildableItem(BuildableItemType type)
+    {
+      this.Type = type;
+      this.PreviewItem = this.CreateItem();
+    }
+
+    public BuildableItemType Type { get; }
+
+    public GridItem PreviewItem { get; }
+
+    /// <summary>
+    /// Gets or sets how often this buildable item can be built.
+    /// Negative values means it can be build indefinetely.
+    /// </summary>
+    public int NumberOfItemsAvailable { get; set; } = -1;
+
+    public UnpoweredItem BuildItem()
+    {
+      if (this.NumberOfItemsAvailable == 0)
+      {
+        throw new InvalidOperationException("Cannot build this item anymore");
+      }
+
+      if (this.NumberOfItemsAvailable > 0)
+      {
+        this.NumberOfItemsAvailable--;
+      }
+
+      return new UnpoweredItem
+      {
+        BuildableItem = this,
+        BuildTarget = this.CreateItem(),
+        RequiredPower = this.GetRequiredPower(),
+      };
+    }
+
+    private LargeInteger GetRequiredPower()
+    {
+      switch (this.Type)
+      {
+        case BuildableItemType.LaserEmitter:
+          return 100;
+        case BuildableItemType.Mirror:
+          return 200;
+        default:
+          throw new InvalidOperationException($"Cannot create item of type {this.Type}");
+      }
+    }
+
+    private GridItem CreateItem()
+    {
+      switch (this.Type)
+      {
+        case BuildableItemType.LaserEmitter:
+          return new LaserEmitter
+          {
+            LaserStrength = 1,
+            Direction = new Vector2(1, 0),
+          };
+        case BuildableItemType.Mirror:
+          return new Mirror();
+        default:
+          throw new InvalidOperationException($"Cannot create item of type {this.Type}");
+      }
+    }
+  }
+}
