@@ -40,3 +40,12 @@
 	bottom: 0;
 	width: 100%;
 }
+
+.grid-item-unpowered-item .grid-item {
+	position: relative;
+	margin: 0;
+	height: 100%;
+
+	scale: 0.5;
+	border-width: 2px;
+}
