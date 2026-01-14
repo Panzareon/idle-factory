@@ -49,3 +49,23 @@
 	scale: 0.5;
 	border-width: 2px;
 }
+
+.grid-item-production-buff {
+	background-color: lightblue;
+}
+
+.grid-item-production-buff .type {
+	width: 50%;
+	height: 50%;
+	border-top-width: 2px;
+	border-top-style: solid;
+	border-left-width: 2px;
+	border-left-style: solid;
+	transform: rotate(45deg);
+	margin-left: 25%;
+	margin-top: 25%;
+}
+
+.grid-item-production-buff .type.red {
+	border-color:red;
+}

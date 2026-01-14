@@ -26,6 +26,8 @@ namespace IdleFactory.Data.Energy
 
     public List<BuildableItem> BuildableItems { get; } = [];
 
+    public IEnumerable<IBuff> Buffs => this.Items.SelectMany(x => x.Buffs);
+
     public event EventHandler? PropertyChanged;
 
     public void AddGridItem(GridItem item)
@@ -108,6 +110,19 @@ namespace IdleFactory.Data.Energy
     public void RaisePropertyChanged()
     {
       this.PropertyChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    public void AddBuildableItem(BuildableItemType itemType)
+    {
+      var existing = this.BuildableItems.FirstOrDefault(x => x.Type == itemType);
+      if (existing == null)
+      {
+        this.BuildableItems.Add(new BuildableItem(itemType));
+      }
+      else
+      {
+        existing.NumberOfItemsAvailable++;
+      }
     }
   }
 }

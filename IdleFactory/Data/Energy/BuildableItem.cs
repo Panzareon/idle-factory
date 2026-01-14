@@ -1,10 +1,13 @@
 ﻿
+using IdleFactory.Data.Main;
+
 namespace IdleFactory.Data.Energy
 {
   public enum BuildableItemType
   {
-    LaserEmitter,
-    Mirror,
+    LaserEmitter = 1,
+    Mirror = 2,
+    RedProductionBuff = 3,
   }
 
   public class BuildableItem
@@ -53,6 +56,8 @@ namespace IdleFactory.Data.Energy
           return 100;
         case BuildableItemType.Mirror:
           return 200;
+        case BuildableItemType.RedProductionBuff:
+          return 400;
         default:
           throw new InvalidOperationException($"Cannot create item of type {this.Type}");
       }
@@ -70,6 +75,8 @@ namespace IdleFactory.Data.Energy
           };
         case BuildableItemType.Mirror:
           return new Mirror();
+        case BuildableItemType.RedProductionBuff:
+          return new ProductionBuff(ResourceType.Red);
         default:
           throw new InvalidOperationException($"Cannot create item of type {this.Type}");
       }

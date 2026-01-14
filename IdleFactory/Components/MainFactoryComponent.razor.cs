@@ -24,6 +24,11 @@ namespace IdleFactory.Components
 #endif
       }
     }
+    private void Skip()
+    {
+      MainFactory.Add(ResourceType.Red, 2000);
+      MainFactory.Add(ResourceType.Blue, 1000);
+    }
 
     public void Dispose()
     {
@@ -110,6 +115,8 @@ namespace IdleFactory.Components
       yield return (MainFactoryUnlocks.RedGenerator2, true);
       yield return (MainFactoryUnlocks.FocusGenerator, true);
       yield return (MainFactoryUnlocks.RedToBlue, this.MainFactory.HasResource(ResourceType.Red, 1200));
+      yield return (MainFactoryUnlocks.EnergyGrid, this.MainFactory.HasResource(ResourceType.Red, 5000));
+      yield return (MainFactoryUnlocks.RedProductionBuffItem, this.FactoryDataService.Data.EnergyGrid.IsEnabled);
     }
   }
 }

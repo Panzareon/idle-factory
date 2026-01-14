@@ -9,6 +9,8 @@ namespace IdleFactory.Data
 
 		public EnergyGrid EnergyGrid { get; } = new EnergyGrid();
 
+    public IEnumerable<IBuff> Buffs => this.EnergyGrid.Buffs;
+
     public void AfterGameTick()
     {
       this.MainFactory.AfterGameTick();

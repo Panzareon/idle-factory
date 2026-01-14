@@ -20,6 +20,7 @@ namespace IdleFactory.Components
         LaserEmitter => "laser-emitter",
         Mirror => "mirror",
         UnpoweredItem => "unpowered-item",
+        ProductionBuff => "production-buff",
         _ => "default"
       };
 

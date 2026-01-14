@@ -16,5 +16,8 @@
 			<div class="fill-amount" style="height:@GetFillPercent(unpoweredItem)%"/>
 			<EnergyGridItem Item="unpoweredItem.BuildTarget" />
 			break;
+		case ProductionBuff productionBuff:
+			<div class="type @productionBuff.Type" />
+			break;
 	}
 </div>

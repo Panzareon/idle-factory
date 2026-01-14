@@ -1,4 +1,6 @@
-﻿namespace IdleFactory.Data.Main
+﻿using IdleFactory.Data.Energy;
+
+namespace IdleFactory.Data.Main
 {
   public enum MainFactoryUnlocks
   {
@@ -11,6 +13,8 @@
     RedToBlue = 3,
 
     EnergyGrid = 4,
+
+    RedProductionBuffItem = 5,
   }
 
   public static class MainFactoryUnlocksExtensions
@@ -29,6 +33,8 @@
             return [new ResourceCost(ResourceType.Red, 20000)];
           case MainFactoryUnlocks.EnergyGrid:
             return [new ResourceCost(ResourceType.Red, 20000), new ResourceCost(ResourceType.Blue, 100)];
+          case MainFactoryUnlocks.RedProductionBuffItem:
+            return [new ResourceCost(ResourceType.Red, 50000), new ResourceCost(ResourceType.Blue, 1000)];
           default:
             throw new InvalidOperationException($"No costs specified for unlock {unlock}");
         }
@@ -46,6 +52,9 @@
             break;
           case MainFactoryUnlocks.EnergyGrid:
             data.EnergyGrid.IsEnabled = true;
+            break;
+          case MainFactoryUnlocks.RedProductionBuffItem:
+            data.EnergyGrid.AddBuildableItem(BuildableItemType.RedProductionBuff);
             break;
         }
       }

@@ -54,6 +54,7 @@ namespace IdleFactory.Services
     /// <param name="deltaTime">The delta time since the last tick.</param>
     private void GameTick(MainFactory mainFactory, float deltaTime)
     {
+      var buffs = factoryDataService.Data.Buffs.OfType<IMainFactoryBuff>().OrderBy(x => x.Order).ToArray();
       foreach (var generator in mainFactory.ResourceGenerators)
       {
         if (!generator.IsEnabled)
@@ -93,6 +94,11 @@ namespace IdleFactory.Services
 
               mainFactory.Remove(new ResourceCost(generator.ConvertFrom, amountToRemove));
             }
+          }
+
+          foreach (var buff in buffs)
+          {
+            amount = buff.AdjustProduction(amount, generator);
           }
 
           mainFactory.Add(generator.ResourceType, amount);
@@ -144,6 +150,12 @@ namespace IdleFactory.Services
           unpoweredItem.BuildTarget.Position = unpoweredItem.Position;
           energyGrid.AddGridItem(unpoweredItem.BuildTarget);
           hasChanged = true;
+        }
+
+        if (gridItem is PoweredItem poweredItem)
+        {
+          poweredItem.LastPowerValue = poweredItem.CurrentPowerValue;
+          poweredItem.CurrentPowerValue = 0;
         }
       }
 
