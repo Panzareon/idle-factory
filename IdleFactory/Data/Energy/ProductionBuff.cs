@@ -6,8 +6,6 @@ namespace IdleFactory.Data.Energy
   {
     public int Order { get; } = 0;
 
-    public override IEnumerable<IBuff> Buffs => [this];
-
     public string Type => resourceType.ToString().ToLowerInvariant();
 
     public LargeInteger AdjustProduction(LargeInteger baseAmount, ResourceGenerator resourceGenerator)

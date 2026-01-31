@@ -69,3 +69,25 @@
 .grid-item-production-buff .type.red {
 	border-color:red;
 }
+
+.grid-item-laser-distance-buff {
+	position: relative;
+}
+
+.grid-item-laser-distance-buff div {
+	width: 70%;
+	margin-left: 15%;
+	position: absolute;
+}
+.grid-item-laser-distance-buff .line {
+	height: 10%;
+	margin-top: 45%;
+	background-color: black;
+}
+
+.grid-item-laser-distance-buff .distance {
+	height: 40%;
+	margin-top: 30%;
+	border-left: 2px solid black;
+	border-right: 2px solid black;
+}

@@ -102,7 +102,7 @@ namespace IdleFactory.Components
       {
         case Mirror mirror:
           mirror.PositiveDirection = !mirror.PositiveDirection;
-          this.EnergyGrid.RecalculateLaser();
+          this.EnergyGrid.NeedRecalculateLaser();
           break;
         case LaserEmitter laserEmitter:
           if (laserEmitter.Direction.X > 0)
@@ -122,7 +122,7 @@ namespace IdleFactory.Components
             laserEmitter.Direction = new Vector2(1, 0);
           }
 
-          this.EnergyGrid.RecalculateLaser();
+          this.EnergyGrid.NeedRecalculateLaser();
           break;
       }
     }
@@ -140,7 +140,7 @@ namespace IdleFactory.Components
         this.SelectedItem.Position = position;
         if (this.SelectedItem.PlacedInGrid)
         {
-          this.EnergyGrid.RecalculateLaser();
+          this.EnergyGrid.NeedRecalculateLaser();
         }
         else
         {

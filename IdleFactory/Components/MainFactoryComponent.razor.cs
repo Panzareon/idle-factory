@@ -117,6 +117,7 @@ namespace IdleFactory.Components
       yield return (MainFactoryUnlocks.RedToBlue, this.MainFactory.HasResource(ResourceType.Red, 1200));
       yield return (MainFactoryUnlocks.EnergyGrid, this.MainFactory.HasResource(ResourceType.Red, 5000));
       yield return (MainFactoryUnlocks.RedProductionBuffItem, this.FactoryDataService.Data.EnergyGrid.IsEnabled);
+      yield return (MainFactoryUnlocks.LaserDistanceBuffItem, this.FactoryDataService.Data.EnergyGrid.IsEnabled);
     }
   }
 }

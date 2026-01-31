@@ -108,6 +108,9 @@ namespace IdleFactory.Services
 
     private void GameTick(EnergyGrid energyGrid, float deltaTime)
     {
+      var buffs = factoryDataService.Data.Buffs.OfType<IEnergyGridBuff>().OrderBy(x => x.Order).ToArray();
+      energyGrid.RecalculateLaser(buffs);
+
       energyGrid.ToNextLaserCalc += deltaTime;
       if (energyGrid.ToNextLaserCalc < energyGrid.LaserTime)
       {

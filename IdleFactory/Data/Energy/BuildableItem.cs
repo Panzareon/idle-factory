@@ -8,6 +8,7 @@ namespace IdleFactory.Data.Energy
     LaserEmitter = 1,
     Mirror = 2,
     RedProductionBuff = 3,
+    LaserDistanceBuff = 4,
   }
 
   public class BuildableItem
@@ -58,6 +59,8 @@ namespace IdleFactory.Data.Energy
           return 200;
         case BuildableItemType.RedProductionBuff:
           return 400;
+        case BuildableItemType.LaserDistanceBuff:
+          return 400;
         default:
           throw new InvalidOperationException($"Cannot create item of type {this.Type}");
       }
@@ -77,6 +80,8 @@ namespace IdleFactory.Data.Energy
           return new Mirror();
         case BuildableItemType.RedProductionBuff:
           return new ProductionBuff(ResourceType.Red);
+        case BuildableItemType.LaserDistanceBuff:
+          return new LaserDistanceBuff();
         default:
           throw new InvalidOperationException($"Cannot create item of type {this.Type}");
       }

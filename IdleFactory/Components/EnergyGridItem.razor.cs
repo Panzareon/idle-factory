@@ -21,6 +21,7 @@ namespace IdleFactory.Components
         Mirror => "mirror",
         UnpoweredItem => "unpowered-item",
         ProductionBuff => "production-buff",
+        LaserDistanceBuff => "laser-distance-buff",
         _ => "default"
       };
 

@@ -5,6 +5,8 @@ namespace IdleFactory.Data.Energy
 {
   public class EnergyGrid
   {
+    private bool recalculate;
+
     public bool IsEnabled { get; set; }
 
     public int Width { get; set; } = 4;
@@ -35,7 +37,7 @@ namespace IdleFactory.Data.Energy
       this.Items.Add(item);
       item.PlacedInGrid = true;
       this.NotPlacedItems.Remove(item);
-      this.RecalculateLaser();
+      this.NeedRecalculateLaser();
     }
 
     public void RemoveGridItem(GridItem item)
@@ -43,24 +45,41 @@ namespace IdleFactory.Data.Energy
       this.Items.Remove(item);
       item.PlacedInGrid = false;
       this.NotPlacedItems.Add(item);
-      this.RecalculateLaser();
+      this.NeedRecalculateLaser();
     }
 
-    public void RecalculateLaser()
+    public void NeedRecalculateLaser()
     {
+      this.recalculate = true;
+    }
+
+    public void RecalculateLaser(IEnergyGridBuff[] buffs)
+    {
+      if (!this.recalculate)
+      {
+        return;
+      }
+
+      this.recalculate = false;
       this.CalculatedLaser.Clear();
       foreach (var laserEmitter in this.Items.OfType<LaserEmitter>())
       {
-        this.CalculateLaserEmitter(laserEmitter);
+        this.CalculateLaserEmitter(laserEmitter, buffs);
       }
     }
 
-    private void CalculateLaserEmitter(LaserEmitter laserEmitter)
+    private void CalculateLaserEmitter(LaserEmitter laserEmitter, IEnergyGridBuff[] buffs)
     {
       var currentDirection = laserEmitter.Direction;
       var currentPosition = laserEmitter.Position;
       var currentLaser = new Laser(currentDirection, currentPosition, currentPosition, 0, laserEmitter.LaserStrength);
-      for (var i = 0; i < laserEmitter.MaxDistance; i++)
+      var maxDistance = laserEmitter.MaxDistance;
+      for (var i = 0; i < buffs.Length; i++)
+      {
+        maxDistance = buffs[i].AdjustLaserDistance(laserEmitter, maxDistance);
+      }
+
+      for (var i = 0; i < maxDistance; i++)
       {
         var nextPosition = currentPosition + currentDirection;
         var (isFree, item) = Check(nextPosition);
