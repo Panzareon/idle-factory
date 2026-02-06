@@ -7,7 +7,22 @@ namespace IdleFactory.Data.Energy
   {
     private bool recalculate;
 
-    public bool IsEnabled { get; set; }
+    private BehaviorSubject<bool> isEnabledObservable = new() { Value = false };
+
+    public bool IsEnabled
+    {
+      get;
+      set
+      {
+        if (field != value)
+        {
+          field = value;
+          this.isEnabledObservable.Value = value;
+        }
+      }
+    }
+
+    public ICustomObservable<bool> IsEnabledObservable => this.isEnabledObservable;
 
     public int Width { get; set; } = 4;
 

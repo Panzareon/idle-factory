@@ -1,11 +1,16 @@
 using IdleFactory.Data.Main;
+using IdleFactory.ObservableFramework;
 using IdleFactory.Services;
 using Microsoft.AspNetCore.Components;
+using System.Linq;
 
 namespace IdleFactory.Components
 {
   public partial class MainFactoryComponent : IDisposable
   {
+    private IReadOnlyList<AvailableUnlock> availableUnlocks = [];
+    private Observer? observer;
+
     [Inject]
     public required FactoryDataService FactoryDataService { get; set; }
 
@@ -32,16 +37,26 @@ namespace IdleFactory.Components
 
     public void Dispose()
     {
-      this.MainFactory.PropertyChanged -= MainFactoryPropertyChanged;
+      this.MainFactory.PropertyChanged -= RelevantValueChanged;
+      this.observer?.ValueChanged -= RelevantValueChanged;
     }
 
     protected override void OnInitialized()
     {
       base.OnInitialized();
-      this.MainFactory.PropertyChanged += this.MainFactoryPropertyChanged;
+      this.MainFactory.PropertyChanged += this.RelevantValueChanged;
+      this.availableUnlocks =
+        availableUnlocks = this.GetAvailableUnlockTypes()
+        .Select(availableUnlock =>
+        {
+          var costs = availableUnlock.UnlockType.GetCosts();
+          return new AvailableUnlock(availableUnlock.UnlockType, costs.ToCostString(), this.MainFactory.HasResourcesObservable(costs), availableUnlock.IsAvailable, this.MainFactory.Unlocks.Contains(availableUnlock.UnlockType));
+        }).ToList();
+      this.observer = this.availableUnlocks.SelectMany(x => x.Observables).OnAnyChanged();
+      this.observer.ValueChanged += this.RelevantValueChanged;
     }
 
-    private void MainFactoryPropertyChanged(object? sender, EventArgs e)
+    private void RelevantValueChanged(object? sender, EventArgs e)
     {
       this.StateHasChanged();
     }
@@ -83,8 +98,9 @@ namespace IdleFactory.Components
       resourceGenerator.Upgrade();
     }
 
-    private void Unlock(MainFactoryUnlocks unlock)
+    private void Unlock(AvailableUnlock availableUnlock)
     {
+      var unlock = availableUnlock.Unlock;
       var costs = unlock.GetCosts();
       if (!this.MainFactory.HasResources(costs))
       {
@@ -94,30 +110,55 @@ namespace IdleFactory.Components
       this.MainFactory.Remove(costs);
       this.MainFactory.Unlocks.Add(unlock);
       unlock.Apply(this.MainFactory, this.FactoryDataService.Data);
+      availableUnlock.HasUnlocked();
     }
 
-    private IEnumerable<(MainFactoryUnlocks Unlock, string CostString, bool CanBuy)> GetVisibleUnlocks()
+    private IEnumerable<AvailableUnlock> GetVisibleUnlocks()
     {
-      foreach (var availableUnlock in this.GetAvailableUnlockTypes())
+      return availableUnlocks.Where(x => x.IsVisible);
+    }
+
+    private IEnumerable<(MainFactoryUnlocks UnlockType, ICustomObservable<bool> IsAvailable)> GetAvailableUnlockTypes()
+    {
+      yield return (MainFactoryUnlocks.RedGenerator2, CustomObservable.Return(true));
+      yield return (MainFactoryUnlocks.FocusGenerator, CustomObservable.Return(true));
+      yield return (MainFactoryUnlocks.RedToBlue, this.MainFactory.HasResourceObservable(ResourceType.Red, 1200));
+      yield return (MainFactoryUnlocks.EnergyGrid, this.MainFactory.HasResourceObservable(ResourceType.Red, 5000));
+      yield return (MainFactoryUnlocks.RedProductionBuffItem, this.FactoryDataService.Data.EnergyGrid.IsEnabledObservable);
+      yield return (MainFactoryUnlocks.LaserDistanceBuffItem, this.FactoryDataService.Data.EnergyGrid.IsEnabledObservable);
+    }
+
+    private class AvailableUnlock(MainFactoryUnlocks unlock, string costString, ICustomObservable<bool> canBuy, ICustomObservable<bool> isAvailable, bool alreadyUnlocked)
+    {
+      private bool wasVisible = false;
+      private bool hasUnlocked = alreadyUnlocked;
+
+      public MainFactoryUnlocks Unlock { get; } = unlock;
+
+      public string CostString { get; } = costString;
+
+      public bool CanBuy => canBuy.Value;
+
+      public bool IsVisible
       {
-        if ((availableUnlock.IsAvailable || this.MainFactory.AvailableUnlocks.Contains(availableUnlock.UnlockType))
-          && !this.MainFactory.Unlocks.Contains(availableUnlock.UnlockType))
+        get
         {
-          this.MainFactory.AvailableUnlocks.Add(availableUnlock.UnlockType);
-          var costs = availableUnlock.UnlockType.GetCosts();
-          yield return (availableUnlock.UnlockType, costs.ToCostString(), this.MainFactory.HasResources(costs));
+          if (!isAvailable.Value && !this.wasVisible)
+          {
+            return false;
+          }
+
+          this.wasVisible = true;
+          return !hasUnlocked;
         }
       }
-    }
 
-    private IEnumerable<(MainFactoryUnlocks UnlockType, bool IsAvailable)> GetAvailableUnlockTypes()
-    {
-      yield return (MainFactoryUnlocks.RedGenerator2, true);
-      yield return (MainFactoryUnlocks.FocusGenerator, true);
-      yield return (MainFactoryUnlocks.RedToBlue, this.MainFactory.HasResource(ResourceType.Red, 1200));
-      yield return (MainFactoryUnlocks.EnergyGrid, this.MainFactory.HasResource(ResourceType.Red, 5000));
-      yield return (MainFactoryUnlocks.RedProductionBuffItem, this.FactoryDataService.Data.EnergyGrid.IsEnabled);
-      yield return (MainFactoryUnlocks.LaserDistanceBuffItem, this.FactoryDataService.Data.EnergyGrid.IsEnabled);
+      public void HasUnlocked()
+      {
+        this.hasUnlocked = true;
+      }
+
+      public IEnumerable<ICustomObservable> Observables => [canBuy, isAvailable];
     }
   }
 }

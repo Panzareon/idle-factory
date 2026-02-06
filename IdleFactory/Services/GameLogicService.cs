@@ -20,7 +20,7 @@ namespace IdleFactory.Services
       }
 
       factoryDataService.Data.MainFactory.ResourceGenerators.Add(new ResourceGenerator { ResourceType = ResourceType.Red, GenerationAmount = 1, GenerationTime = 1 });
-      factoryDataService.Data.MainFactory.Resources.Add(ResourceType.Red, 0);
+      factoryDataService.Data.MainFactory.Resources.Add(ResourceType.Red, new Resource());
       factoryDataService.Data.EnergyGrid.AddGridItem(new LaserEmitter { Direction = new Vector2(0, 1), Position = new Vector2(0, 0), LaserStrength = 1 });
       factoryDataService.Data.EnergyGrid.BuildableItems.Add(new BuildableItem(BuildableItemType.LaserEmitter));
       factoryDataService.Data.EnergyGrid.BuildableItems.Add(new BuildableItem(BuildableItemType.Mirror));

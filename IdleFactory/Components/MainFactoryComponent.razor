@@ -3,7 +3,7 @@
 	@foreach (var resource in MainFactory.Resources)
 	{
 		<li class="list-group-item">
-			@resource.Key:@resource.Value.ToString(Constants.DefaultDisplayPrecision)
+			@resource.Key:<ResourceDisplay Resource="resource.Value" />
 		</li>
 	}
 </ul>
@@ -55,7 +55,7 @@
 <div>
 	@foreach (var visibleUnlock in GetVisibleUnlocks())
 	{
-		<button class="btn btn-primary" @onclick="() => Unlock(visibleUnlock.Unlock)" disabled="@(!visibleUnlock.CanBuy)">@visibleUnlock.Unlock (@visibleUnlock.CostString)</button>
+		<button class="btn btn-primary" @onclick="() => Unlock(visibleUnlock)" disabled="@(!visibleUnlock.CanBuy)">@visibleUnlock.Unlock (@visibleUnlock.CostString)</button>
 	}
 </div>
 @if (AllowSkip)

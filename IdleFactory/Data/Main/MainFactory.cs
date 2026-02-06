@@ -11,12 +11,17 @@ namespace IdleFactory.Data.Main
 
   public class MainFactory
   {
-    public IDictionary<ResourceType, LargeInteger> Resources { get; } = new Dictionary<ResourceType, LargeInteger>();
+    public MainFactory()
+    {
+      this.observableResources = new() { Value = this.Resources };
+    }
+    public IDictionary<ResourceType, Resource> Resources { get; } = new Dictionary<ResourceType, Resource>();
+
+    private readonly BehaviorSubject<IDictionary<ResourceType, Resource>> observableResources;
 
     public IList<ResourceGenerator> ResourceGenerators { get; } = [];
 
     public IList<MainFactoryUnlocks> Unlocks { get; } = [];
-    public ISet<MainFactoryUnlocks> AvailableUnlocks { get; } = new HashSet<MainFactoryUnlocks>();
 
     public event EventHandler? PropertyChanged;
 
@@ -27,33 +32,38 @@ namespace IdleFactory.Data.Main
       if (this.hasPropertyChanged)
       {
         this.PropertyChanged?.Invoke(this, EventArgs.Empty);
+        this.hasPropertyChanged = false;
+      }
+
+      foreach (var resource in this.Resources.Values)
+      {
+        resource.AfterGameTick();
       }
     }
 
     public void Add(ResourceType resourceType, LargeInteger value)
     {
-      if (this.Resources.TryGetValue(resourceType, out var currentValue))
+      if (!this.Resources.TryGetValue(resourceType, out var currentValue))
       {
-        this.Resources[resourceType] = currentValue + value;
-      }
-      else
-      {
-        this.Resources[resourceType] = value;
+        this.hasPropertyChanged = true;
+        currentValue = new Resource();
+        this.Resources[resourceType] = currentValue;
+        this.observableResources.Value = this.Resources;
       }
 
-      this.hasPropertyChanged = true;
+      currentValue.Amount += value;
     }
 
     public void Remove(ResourceCost cost)
     {
       if (this.Resources.TryGetValue(cost.ResourceType, out var currentValue))
       {
-        if (currentValue < cost.Amount)
+        if (currentValue.Amount < cost.Amount)
         {
           Debug.Fail("Not enougth resources");
         }
 
-        this.Resources[cost.ResourceType] = currentValue - cost.Amount;
+        currentValue.Amount = currentValue.Amount - cost.Amount;
       }
     }
 
@@ -69,7 +79,7 @@ namespace IdleFactory.Data.Main
     {
       foreach (var cost in costs)
       {
-        if (!this.Resources.TryGetValue(cost.ResourceType, out var amount) || amount < cost.Amount)
+        if (!this.Resources.TryGetValue(cost.ResourceType, out var resource) || resource.Amount < cost.Amount)
         {
           return false;
         }
@@ -78,14 +88,30 @@ namespace IdleFactory.Data.Main
       return true;
     }
 
+    public ICustomObservable<bool> HasResourcesObservable(IEnumerable<ResourceCost> costs)
+    {
+      var hasIndividualResources = costs.Select(cost =>
+        this.HasResourceObservable(cost.ResourceType, cost.Amount));
+      return CustomObservable.CombineLatest(hasIndividualResources, results => results.All(r => r));
+    }
+
+    public ICustomObservable<bool> HasResourceObservable(ResourceType resourceType, LargeInteger cost)
+    {
+      return this.observableResources.SelectMany(resources =>
+                resources.TryGetValue(resourceType, out var resource) ?
+                resource.ObservableAmount
+                    .Select(amount => amount >= cost)
+        : CustomObservable.Return(false));
+    }
+
     public bool HasResource(ResourceType convertFrom, LargeInteger cost)
     {
-      return this.Resources.TryGetValue(convertFrom, out var amount) && amount >= cost;
+      return this.Resources.TryGetValue(convertFrom, out var resource) && resource.Amount >= cost;
     }
 
     public LargeInteger GetResource(ResourceType convertFrom)
     {
-      return this.Resources.TryGetValue(convertFrom, out var amount) ? amount : 0;
+      return this.Resources.TryGetValue(convertFrom, out var resource) ? resource.Amount : 0;
     }
   }
 }
