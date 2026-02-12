@@ -15,7 +15,7 @@ namespace IdleFactory.Tests.Data
         Width = 4,
         Height = 4,
       };
-      var emitter = new LaserEmitter { Position = new Vector2(0, 0), Direction = new Vector2(0, 1), MaxDistance = 2 };
+      var emitter = new LaserEmitter { Position = new Vector2(0, 0), Direction = new Vector2(0, 1), MaxDistance = 2, LaserStrength = 1 };
       grid.AddGridItem(emitter);
 
       Assert.That(grid.CalculatedLaser, Is.EqualTo([new Laser(emitter.Direction, new Vector2(0, 0), new Vector2(0, 2), 0, emitter.LaserStrength)]));
@@ -29,7 +29,7 @@ namespace IdleFactory.Tests.Data
         Width = 4,
         Height = 4,
       };
-      var emitter = new LaserEmitter { Position = new Vector2(0, 0), Direction = new Vector2(0, 1), MaxDistance = 4 };
+      var emitter = new LaserEmitter { Position = new Vector2(0, 0), Direction = new Vector2(0, 1), MaxDistance = 4, LaserStrength = 1 };
       grid.AddGridItem(emitter);
 
       Assert.That(grid.CalculatedLaser, Is.EqualTo([new Laser(emitter.Direction, new Vector2(0, 0), new Vector2(0, 3), 0.5f, emitter.LaserStrength)]));
@@ -43,7 +43,7 @@ namespace IdleFactory.Tests.Data
         Width = 4,
         Height = 4,
       };
-      var emitter = new LaserEmitter { Position = new Vector2(0, 0), Direction = new Vector2(0, 1), MaxDistance = 4 };
+      var emitter = new LaserEmitter { Position = new Vector2(0, 0), Direction = new Vector2(0, 1), MaxDistance = 4, LaserStrength = 1 };
       grid.AddGridItem(emitter);
       grid.AddGridItem(new Mirror { Position = new Vector2(0, 1), PositiveDirection = false });
 

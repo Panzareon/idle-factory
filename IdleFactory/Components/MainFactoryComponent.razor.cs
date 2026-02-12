@@ -1,14 +1,13 @@
 using IdleFactory.Data.Main;
-using IdleFactory.ObservableFramework;
 using IdleFactory.Services;
 using Microsoft.AspNetCore.Components;
-using System.Linq;
 
 namespace IdleFactory.Components
 {
   public partial class MainFactoryComponent : IDisposable
   {
     private IReadOnlyList<AvailableUnlock> availableUnlocks = [];
+    private IObservableCollection<ShownResourceGenerator> resourceGenerators = new CustomObservableCollection<ShownResourceGenerator>([]);
     private Observer? observer;
 
     [Inject]
@@ -52,7 +51,11 @@ namespace IdleFactory.Components
           var costs = availableUnlock.UnlockType.GetCosts();
           return new AvailableUnlock(availableUnlock.UnlockType, costs.ToCostString(), this.MainFactory.HasResourcesObservable(costs), availableUnlock.IsAvailable, this.MainFactory.Unlocks.Contains(availableUnlock.UnlockType));
         }).ToList();
-      this.observer = this.availableUnlocks.SelectMany(x => x.Observables).OnAnyChanged();
+
+      this.resourceGenerators = this.MainFactory.ResourceGenerators.Select(x => new ShownResourceGenerator(x, this.MainFactory));
+      this.observer = this.availableUnlocks.SelectMany(x => x.Observables).AsObservableCollection()
+        .Concat(this.resourceGenerators.Select(x => x.CanUpgrade))
+        .OnAnyChanged();
       this.observer.ValueChanged += this.RelevantValueChanged;
     }
 
@@ -159,6 +162,18 @@ namespace IdleFactory.Components
       }
 
       public IEnumerable<ICustomObservable> Observables => [canBuy, isAvailable];
+    }
+
+    private class ShownResourceGenerator
+    {
+      public ShownResourceGenerator(ResourceGenerator resourceGenerator, MainFactory mainFactory)
+      {
+        this.ResourceGenerator = resourceGenerator;
+        this.CanUpgrade = resourceGenerator.UpgradeAmountLevel.SelectMany(x => mainFactory.HasResourcesObservable(resourceGenerator.GetUpgradeCost()));
+      }
+      public ResourceGenerator ResourceGenerator { get; }
+
+      public ICustomObservable<bool> CanUpgrade { get; }
     }
   }
 }

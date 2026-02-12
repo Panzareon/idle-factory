@@ -19,7 +19,7 @@ namespace IdleFactory.Data.Main
 
     private readonly BehaviorSubject<IDictionary<ResourceType, Resource>> observableResources;
 
-    public IList<ResourceGenerator> ResourceGenerators { get; } = [];
+    public CustomObservableCollection<ResourceGenerator> ResourceGenerators { get; } = new([]);
 
     public IList<MainFactoryUnlocks> Unlocks { get; } = [];
 

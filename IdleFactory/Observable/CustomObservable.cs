@@ -1,4 +1,4 @@
-﻿using IdleFactory.ObservableFramework;
+﻿using IdleFactory.Observable;
 
 namespace IdleFactory.Observable
 {
@@ -27,9 +27,26 @@ namespace IdleFactory.Observable
       };
     }
 
-    public static Observer OnAnyChanged(this IEnumerable<ICustomObservable> observables)
+    public static Observer OnAnyChanged<TCollection>(this TCollection observables)
+      where TCollection : IObservableCollection<ICustomObservable>
     {
-      return new Observer([.. observables]);
+      return new Observer(observables);
+    }
+
+    public static CustomObservableCollection<TItem> AsObservableCollection<TItem>(this IEnumerable<TItem> observables)
+      where TItem : ICustomObservable
+    {
+      return new CustomObservableCollection<TItem>(observables);
+    }
+
+    public static IObservableCollection<TTarget> Select<TSource, TTarget>(this IObservableCollection<TSource> sources, Func<TSource, TTarget> selector)
+    {
+      return new SelectObservableCollection<TSource, TTarget>(sources, selector);
+    }
+
+    public static IObservableCollection<TTarget> Concat<TTarget>(this IObservableCollection<TTarget> collection1, IObservableCollection<TTarget> collection2)
+    {
+      return new ConcatObservableCollection<TTarget>(collection1, collection2);
     }
   }
 }

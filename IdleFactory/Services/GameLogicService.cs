@@ -8,7 +8,7 @@ namespace IdleFactory.Services
   public sealed class GameLogicService(FactoryDataService factoryDataService) : IDisposable
   {
     private static readonly TimeSpan targetTickTime = TimeSpan.FromSeconds(1 / 20f);
-    private Timer timer;
+    private Timer? timer;
     private Stopwatch stopwatch = new Stopwatch();
 
     public void Init()

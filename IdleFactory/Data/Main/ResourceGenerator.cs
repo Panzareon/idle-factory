@@ -13,7 +13,7 @@
 
     public LargeInteger GenerationAmount { get; set; }
 
-    public int UpgradeAmountLevel { get; set; } = 1;
+    public BehaviorSubject<int> UpgradeAmountLevel { get; } = new BehaviorSubject<int> { Value = 1 };
 
     public bool IsFocused { get; set; }
 
@@ -25,8 +25,8 @@
 
     public void Upgrade()
     {
-      this.UpgradeAmountLevel++;
-      if (this.UpgradeAmountLevel < 10)
+      this.UpgradeAmountLevel.Value++;
+      if (this.UpgradeAmountLevel.Value < 10)
       {
         this.GenerationTime /= 1.5f;
       }
@@ -45,12 +45,12 @@
     {
       if (this.ResourceType == ResourceType.Red)
       {
-        yield return new ResourceCost(ResourceType.Red, ((LargeInteger)2).ToThePower(this.UpgradeAmountLevel));
+        yield return new ResourceCost(ResourceType.Red, ((LargeInteger)2).ToThePower(this.UpgradeAmountLevel.Value));
       }
       else if (this.ResourceType == ResourceType.Blue)
       {
-        yield return new ResourceCost(ResourceType.Red, 2000 * ((LargeInteger)2).ToThePower(this.UpgradeAmountLevel));
-        yield return new ResourceCost(ResourceType.Blue, ((LargeInteger)2).ToThePower(this.UpgradeAmountLevel));
+        yield return new ResourceCost(ResourceType.Red, 2000 * ((LargeInteger)2).ToThePower(this.UpgradeAmountLevel.Value));
+        yield return new ResourceCost(ResourceType.Blue, ((LargeInteger)2).ToThePower(this.UpgradeAmountLevel.Value));
       }
     }
   }
