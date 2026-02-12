@@ -32,12 +32,12 @@
 
 .laser-horizontal {
 	height: 5px;
-	margin-top: -2.5px;
+	margin-top: -3px;
 }
 
 .laser-vertical {
 	width: 5px;
-	margin-left: -2.5px;
+	margin-left: -3px;
 }
 
 .laser-hit {

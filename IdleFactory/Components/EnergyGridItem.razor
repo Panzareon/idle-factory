@@ -2,6 +2,9 @@
 <div class="grid-item @GetClassName()">
 	@switch (Item)
 	{
+		case LaserEmitter _:
+			<div class="source"></div>
+			break;
 		case Mirror mirror:
 			@if (mirror.PositiveDirection)
 			{
