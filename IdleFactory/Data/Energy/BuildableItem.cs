@@ -27,9 +27,9 @@ namespace IdleFactory.Data.Energy
     /// Gets or sets how often this buildable item can be built.
     /// Negative values means it can be build indefinetely.
     /// </summary>
-    public int NumberOfItemsAvailable { get; set; } = -1;
+    public int NumberOfItemsAvailable { get; set; } = 1;
 
-    public UnpoweredItem BuildItem()
+    public UnpoweredItem BuildItem(EnergyGrid energyGrid)
     {
       if (this.NumberOfItemsAvailable == 0)
       {
@@ -39,6 +39,10 @@ namespace IdleFactory.Data.Energy
       if (this.NumberOfItemsAvailable > 0)
       {
         this.NumberOfItemsAvailable--;
+        if (this.NumberOfItemsAvailable == 0)
+        {
+          energyGrid.BuildableItems.Remove(this);
+        }
       }
 
       return new UnpoweredItem

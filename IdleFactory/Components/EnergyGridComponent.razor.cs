@@ -167,7 +167,7 @@ namespace IdleFactory.Components
           }
           else
           {
-            var unpoweredItem = buildableItem.BuildItem();
+            var unpoweredItem = buildableItem.BuildItem(this.EnergyGrid);
             unpoweredItem.Position = position;
             this.EnergyGrid.AddGridItem(unpoweredItem);
           }
