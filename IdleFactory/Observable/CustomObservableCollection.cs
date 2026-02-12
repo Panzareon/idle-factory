@@ -6,9 +6,16 @@ namespace IdleFactory.Observable
   {
     private readonly List<TItem> items;
 
-    public CustomObservableCollection(IEnumerable<TItem> items)
+    public CustomObservableCollection(IEnumerable<TItem>? items = null)
     {
-      this.items = [.. items];
+      if (items == null)
+      {
+        this.items = [];
+      }
+      else
+      {
+        this.items = [.. items];
+      }
     }
 
     public int Count => this.items.Count;

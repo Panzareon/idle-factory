@@ -3,10 +3,21 @@ using Microsoft.AspNetCore.Components;
 
 namespace IdleFactory.Components
 {
-  public partial class EnergyGridItem
+  public sealed partial class EnergyGridItem : IDisposable
   {
     [Parameter]
     public required GridItem Item { get; set; }
+
+    protected override void OnInitialized()
+    {
+      base.OnInitialized();
+      this.Item.PropertyChanged += this.GridItemChanged;
+    }
+
+    private void GridItemChanged(object? sender, EventArgs e)
+    {
+      this.StateHasChanged();
+    }
 
     private string GetFillPercent(UnpoweredItem unpoweredItem)
     {
@@ -26,6 +37,11 @@ namespace IdleFactory.Components
       };
 
       return $"grid-item-{specificClassName}";
+    }
+
+    public void Dispose()
+    {
+      this.Item.PropertyChanged -= this.GridItemChanged;
     }
   }
 }

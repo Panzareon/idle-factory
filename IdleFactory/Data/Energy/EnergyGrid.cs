@@ -37,11 +37,11 @@ namespace IdleFactory.Data.Energy
 
     public List<Laser> CalculatedLaser { get; } = [];
 
-    public List<GridItem> Items { get; } = [];
+    public CustomObservableCollection<GridItem> Items { get; } = [];
 
-    public List<GridItem> NotPlacedItems { get; } = [];
+    public CustomObservableCollection<GridItem> NotPlacedItems { get; } = [];
 
-    public List<BuildableItem> BuildableItems { get; } = [];
+    public CustomObservableCollection<BuildableItem> BuildableItems { get; } = [];
 
     public IEnumerable<IBuff> Buffs => this.Items.SelectMany(x => x.Buffs);
 
@@ -81,6 +81,8 @@ namespace IdleFactory.Data.Energy
       {
         this.CalculateLaserEmitter(laserEmitter, buffs);
       }
+
+      this.RaisePropertyChanged();
     }
 
     private void CalculateLaserEmitter(LaserEmitter laserEmitter, IEnergyGridBuff[] buffs)

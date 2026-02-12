@@ -117,7 +117,6 @@ namespace IdleFactory.Services
         return;
       }
 
-      var hasChanged = false;
       var numberOfLasers = MathF.Floor(energyGrid.ToNextLaserCalc / energyGrid.LaserTime);
       energyGrid.ToNextLaserCalc -= numberOfLasers * energyGrid.LaserTime;
       foreach (var laser in energyGrid.CalculatedLaser)
@@ -139,7 +138,6 @@ namespace IdleFactory.Services
         if (target is IPowerSinkGridItem powerSink)
         {
           powerSink.HitByLaser(laser.Strength, numberOfLasers);
-          hasChanged = true;
         }
       }
 
@@ -152,7 +150,6 @@ namespace IdleFactory.Services
 
           unpoweredItem.BuildTarget.Position = unpoweredItem.Position;
           energyGrid.AddGridItem(unpoweredItem.BuildTarget);
-          hasChanged = true;
         }
 
         if (gridItem is PoweredItem poweredItem)
@@ -160,11 +157,8 @@ namespace IdleFactory.Services
           poweredItem.LastPowerValue = poweredItem.CurrentPowerValue;
           poweredItem.CurrentPowerValue = 0;
         }
-      }
 
-      if (hasChanged)
-      {
-        energyGrid.RaisePropertyChanged();
+        gridItem.AfterGameTick();
       }
     }
 

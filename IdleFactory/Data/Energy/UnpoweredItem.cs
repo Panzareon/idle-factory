@@ -19,6 +19,7 @@
     public void HitByLaser(LargeInteger strength, float numberOfHits)
     {
       this.Power += strength * numberOfHits;
+      this.ValueHasChanged();
     }
   }
 }

@@ -22,15 +22,31 @@ namespace IdleFactory.Components
     public void Dispose()
     {
       this.EnergyGrid.PropertyChanged -= this.EnergyGridPropertyChanged;
+      this.EnergyGrid.Items.CollectionChanged -= this.EnergyGridCollectionChanged;
+      this.EnergyGrid.BuildableItems.CollectionChanged -= this.EnergyGridBuildableCollectionChanged;
+      this.EnergyGrid.NotPlacedItems.CollectionChanged -= this.EnergyGridCollectionChanged;
     }
 
     protected override void OnInitialized()
     {
       base.OnInitialized();
       this.EnergyGrid.PropertyChanged += this.EnergyGridPropertyChanged;
+      this.EnergyGrid.Items.CollectionChanged += this.EnergyGridCollectionChanged;
+      this.EnergyGrid.BuildableItems.CollectionChanged += this.EnergyGridBuildableCollectionChanged;
+      this.EnergyGrid.NotPlacedItems.CollectionChanged += this.EnergyGridCollectionChanged;
     }
 
     private void EnergyGridPropertyChanged(object? sender, EventArgs e)
+    {
+      this.StateHasChanged();
+    }
+
+    private void EnergyGridBuildableCollectionChanged(object? sender, ICollectionChangedEventArgs<BuildableItem> e)
+    {
+      this.StateHasChanged();
+    }
+
+    private void EnergyGridCollectionChanged(object? sender, ICollectionChangedEventArgs<GridItem> e)
     {
       this.StateHasChanged();
     }

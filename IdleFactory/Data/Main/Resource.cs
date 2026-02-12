@@ -7,6 +7,9 @@ namespace IdleFactory.Data.Main
 
     private bool hasChanged = false;
 
+    /// <summary>
+    /// Property changed event that is triggered once per game tick, instead of every time the amout changes.
+    /// </summary>
     public event EventHandler? PropertyChanged;
 
     public LargeInteger Amount
