@@ -213,5 +213,15 @@ namespace IdleFactory.Components
       this.EnergyGrid.RemoveGridItem(this.SelectedItem);
       this.SelectedItem = null;
     }
+
+    private void DropNotPlacedItems()
+    {
+      if (this.currentDraggingItem == null || !this.currentDraggingItem.PlacedInGrid)
+      {
+        return;
+      }
+
+      this.EnergyGrid.RemoveGridItem(this.currentDraggingItem);
+    }
   }
 }
