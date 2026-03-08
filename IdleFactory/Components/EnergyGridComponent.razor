@@ -2,7 +2,6 @@
 <div 
 	class="grid"
 	style="width:@(EnergyGrid.Width* GridSize + 1)px;height:@(EnergyGrid.Height* GridSize + 1)px;"
-	@onclick="SelectGrid"
 	ondragover="event.preventDefault()">
 	@for (var i = 1; i < EnergyGrid.Width; i++)
 	{
@@ -20,6 +19,7 @@
 			<div
 				style="left:@(x* GridSize)px;top:@(y* GridSize)px"
 				class="drag-target"
+				@onclick="() => SelectGridPosition(pos)"
 				@ondragenter="() => currentDragOver=pos"
 				@ondrop="() => Drop(pos)">
 			</div>

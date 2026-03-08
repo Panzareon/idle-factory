@@ -160,14 +160,13 @@ namespace IdleFactory.Components
       }
     }
 
-    private void SelectGrid(MouseEventArgs e)
+    private void SelectGridPosition(Vector2 position)
     {
       if (this.SelectedItem == null)
       {
         return;
       }
 
-      var position = new Vector2((int)(e.OffsetX / GridSize), (int)(e.OffsetY / GridSize));
       if (this.MoveToGrid(position, this.SelectedItem))
       {
         this.SelectedItem = null;
