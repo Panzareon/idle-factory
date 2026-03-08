@@ -12,6 +12,10 @@ namespace IdleFactory.Components
     /// </summary>
     private const int GridSize = 30;
 
+    private Vector2? currentDragOver;
+
+    private GridItem? currentDraggingItem;
+
     [Inject]
     public required FactoryDataService FactoryDataService { get; set; }
 
@@ -49,6 +53,19 @@ namespace IdleFactory.Components
     private void EnergyGridCollectionChanged(object? sender, ICollectionChangedEventArgs<GridItem> e)
     {
       this.StateHasChanged();
+    }
+
+    private void StartDrag(GridItem dragginItem)
+    {
+      this.currentDraggingItem = dragginItem;
+    }
+
+    private void Drop(Vector2 position)
+    {
+      if (this.currentDraggingItem != null)
+      {
+        this.MoveToGrid(position, this.currentDraggingItem);
+      }
     }
 
     private static float GetLength(Laser laser)
@@ -151,19 +168,27 @@ namespace IdleFactory.Components
       }
 
       var position = new Vector2((int)(e.OffsetX / GridSize), (int)(e.OffsetY / GridSize));
+      if (this.MoveToGrid(position, this.SelectedItem))
+      {
+        this.SelectedItem = null;
+      }
+    }
+
+    private bool MoveToGrid(Vector2 position, GridItem selectedItem)
+    {
       if (this.EnergyGrid.Check(position).IsFree)
       {
-        this.SelectedItem.Position = position;
-        if (this.SelectedItem.PlacedInGrid)
+        selectedItem.Position = position;
+        if (selectedItem.PlacedInGrid)
         {
           this.EnergyGrid.NeedRecalculateLaser();
         }
         else
         {
-          var buildableItem = this.EnergyGrid.BuildableItems.FirstOrDefault(x => x.PreviewItem == this.SelectedItem);
+          var buildableItem = this.EnergyGrid.BuildableItems.FirstOrDefault(x => x.PreviewItem == selectedItem);
           if (buildableItem == null)
           {
-            this.EnergyGrid.AddGridItem(this.SelectedItem);
+            this.EnergyGrid.AddGridItem(selectedItem);
           }
           else
           {
@@ -172,9 +197,11 @@ namespace IdleFactory.Components
             this.EnergyGrid.AddGridItem(unpoweredItem);
           }
         }
-        
-        this.SelectedItem = null;
+
+        return true;
       }
+
+      return false;
     }
 
     private void SelectNotPlacedItems()

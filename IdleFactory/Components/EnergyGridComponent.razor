@@ -1,5 +1,9 @@
 ﻿@using IdleFactory.Data.Energy
-<div class="grid" style="width:@(EnergyGrid.Width* GridSize + 1)px;height:@(EnergyGrid.Height* GridSize + 1)px;" @onclick="SelectGrid">
+<div 
+	class="grid"
+	style="width:@(EnergyGrid.Width* GridSize + 1)px;height:@(EnergyGrid.Height* GridSize + 1)px;"
+	@onclick="SelectGrid"
+	ondragover="event.preventDefault()">
 	@for (var i = 1; i < EnergyGrid.Width; i++)
 	{
 		<div class="grid-line grid-column" style="left:@(i* GridSize - 1)px"/>
@@ -8,9 +12,28 @@
 	{
 		<div class="grid-line grid-row" style="top:@(i* GridSize - 1)px" />
 	}
+	@for (var x = 0; x < EnergyGrid.Width; x++)
+	{
+		@for (var y = 0; y < EnergyGrid.Height; y++)
+		{
+			var pos = new Vector2(x, y);
+			<div
+				style="left:@(x* GridSize)px;top:@(y* GridSize)px"
+				class="drag-target"
+				@ondragenter="() => currentDragOver=pos"
+				@ondrop="() => Drop(pos)">
+			</div>
+		}
+	}
 	@foreach (var item in EnergyGrid.Items)
 	{
-		<div class="grid-item-wrapper @(SelectedItem == item ? "selected" : "")" style="left:@(item.Position.X* GridSize)px;top:@(item.Position.Y* GridSize)px" @onclick="e => SelectGridItem(e, item)" @onclick:stopPropagation="true">
+		<div
+			draggable="true"
+			class="grid-item-wrapper @(SelectedItem == item ? "selected" : "")"
+			 style="left:@(item.Position.X* GridSize)px;top:@(item.Position.Y* GridSize)px"
+			@onclick="e => SelectGridItem(e, item)"
+			@onclick:stopPropagation="true"
+			@ondragstart="() => StartDrag(item)">
 		  <EnergyGridItem Item="item"/>
 		</div>
 	}
@@ -42,7 +65,12 @@
 <div class="grid-item-container" @onclick="SelectNotPlacedItems">
 	@foreach(var item in EnergyGrid.NotPlacedItems)
 	{
-		<div class="grid-item-wrapper @(SelectedItem == item ? "selected" : "")" @onclick="e => SelectGridItem(e, item)" @onclick:stopPropagation="true">
+		<div
+			draggable="true"
+			class="grid-item-wrapper @(SelectedItem == item ? "selected" : "")"
+			@onclick="e => SelectGridItem(e, item)"
+			@onclick:stopPropagation="true"
+			@ondrag="() => StartDrag(item)">
 			<EnergyGridItem Item="item" />
 		</div>
 	}
@@ -53,7 +81,12 @@ Build:
 <div class="grid-item-container" @onclick="SelectNotPlacedItems">
 	@foreach(var item in EnergyGrid.BuildableItems)
 	{
-		<div class="grid-item-wrapper @(SelectedItem == item.PreviewItem ? "selected" : "")" @onclick="e => SelectGridItem(e, item.PreviewItem)" @onclick:stopPropagation="true">
+		<div
+			draggable="true"
+			class="grid-item-wrapper @(SelectedItem == item.PreviewItem ? "selected" : "")"
+			@onclick="e => SelectGridItem(e, item.PreviewItem)"
+			@onclick:stopPropagation="true"
+			@ondrag="() => StartDrag(item.PreviewItem)">
 			<EnergyGridItem Item="item.PreviewItem" />
 		</div>
 	}

@@ -79,11 +79,13 @@
 	margin-top: calc(2.5px - var(--hit-radius))
 }
 
-.grid .grid-item-wrapper {
+.grid .grid-item-wrapper,
+.grid .drag-target {
 	position: absolute;
 }
 
-.grid-item-wrapper {
+.grid-item-wrapper,
+.grid .drag-target {
 	--grid-item-size: 29px;
 	width: var(--grid-item-size);
 	height: var(--grid-item-size);
