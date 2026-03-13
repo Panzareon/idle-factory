@@ -76,7 +76,14 @@ namespace IdleFactory.Services
           var amount = generator.GenerationAmount * numberOfTicks;
           if (generator.ConvertFrom != ResourceType.Undefined)
           {
-            var conversionCost = amount / generator.ConversionFactor;
+            var conversionFactor = generator.ConversionFactor;
+            foreach (var buff in buffs)
+            {
+              conversionFactor = buff.AdjustProductionConversionFactor(conversionFactor, generator);
+            }
+
+
+            var conversionCost = amount / conversionFactor;
             if (mainFactory.HasResource(generator.ConvertFrom, conversionCost))
             {
               mainFactory.Remove(new ResourceCost(generator.ConvertFrom, conversionCost));
@@ -84,12 +91,12 @@ namespace IdleFactory.Services
             else
             {
               var availableAmount = mainFactory.GetResource(generator.ConvertFrom);
-              amount = availableAmount * generator.ConversionFactor;
-              var amountToRemove = amount / generator.ConversionFactor;
+              amount = availableAmount * conversionFactor;
+              var amountToRemove = amount / conversionFactor;
               if (amountToRemove > availableAmount)
               {
                 amount -= 1;
-                amountToRemove = amount / generator.ConversionFactor;
+                amountToRemove = amount / conversionFactor;
               }
 
               mainFactory.Remove(new ResourceCost(generator.ConvertFrom, amountToRemove));

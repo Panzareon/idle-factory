@@ -9,6 +9,7 @@ namespace IdleFactory.Data.Energy
     Mirror = 2,
     RedProductionBuff = 3,
     LaserDistanceBuff = 4,
+    BlueProductionEfficencyBuff = 5,
   }
 
   public class BuildableItem
@@ -62,7 +63,7 @@ namespace IdleFactory.Data.Energy
         case BuildableItemType.Mirror:
           return 200;
         case BuildableItemType.RedProductionBuff:
-          return 400;
+        case BuildableItemType.BlueProductionEfficencyBuff:
         case BuildableItemType.LaserDistanceBuff:
           return 400;
         default:
@@ -84,6 +85,8 @@ namespace IdleFactory.Data.Energy
           return new Mirror();
         case BuildableItemType.RedProductionBuff:
           return new ProductionBuff(ResourceType.Red);
+        case BuildableItemType.BlueProductionEfficencyBuff:
+          return new ProductionEfficiencyBuff(ResourceType.Blue, ResourceType.Red);
         case BuildableItemType.LaserDistanceBuff:
           return new LaserDistanceBuff();
         default:

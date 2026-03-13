@@ -64,7 +64,8 @@
 	background-color: lightblue;
 }
 
-.grid-item-production-buff .type {
+.grid-item-production-buff .type,
+.grid-item-production-efficiency-buff .type {
 	width: 50%;
 	height: 50%;
 	border-top-width: 2px;
@@ -73,11 +74,19 @@
 	border-left-style: solid;
 	transform: rotate(45deg);
 	margin-left: 25%;
-	margin-top: 25%;
+	margin-top: 35%;
 }
 
 .grid-item-production-buff .type.red {
 	border-color:red;
+}
+
+.grid-item-production-efficiency-buff {
+	background-color: #cfffcf;
+}
+
+.grid-item-production-efficiency-buff .type.blue {
+	border-color:blue;
 }
 
 .grid-item-laser-distance-buff {

@@ -17,6 +17,8 @@ namespace IdleFactory.Data.Main
     RedProductionBuffItem = 5,
 
     LaserDistanceBuffItem = 6,
+
+    BlueProductionEfficencyBuff = 7,
   }
 
   public static class MainFactoryUnlocksExtensions
@@ -36,6 +38,8 @@ namespace IdleFactory.Data.Main
           case MainFactoryUnlocks.EnergyGrid:
             return [new ResourceCost(ResourceType.Red, 20000), new ResourceCost(ResourceType.Blue, 100)];
           case MainFactoryUnlocks.RedProductionBuffItem:
+            return [new ResourceCost(ResourceType.Red, 50000), new ResourceCost(ResourceType.Blue, 1000)];
+          case MainFactoryUnlocks.BlueProductionEfficencyBuff:
             return [new ResourceCost(ResourceType.Red, 50000), new ResourceCost(ResourceType.Blue, 1000)];
           case MainFactoryUnlocks.LaserDistanceBuffItem:
             return [new ResourceCost(ResourceType.Red, 50000)];
@@ -59,6 +63,9 @@ namespace IdleFactory.Data.Main
             break;
           case MainFactoryUnlocks.RedProductionBuffItem:
             data.EnergyGrid.AddBuildableItem(BuildableItemType.RedProductionBuff);
+            break;
+          case MainFactoryUnlocks.BlueProductionEfficencyBuff:
+            data.EnergyGrid.AddBuildableItem(BuildableItemType.BlueProductionEfficencyBuff);
             break;
           case MainFactoryUnlocks.LaserDistanceBuffItem:
             data.EnergyGrid.AddBuildableItem(BuildableItemType.LaserDistanceBuff);

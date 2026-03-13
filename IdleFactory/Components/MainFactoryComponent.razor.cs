@@ -30,7 +30,7 @@ namespace IdleFactory.Components
     }
     private void Skip()
     {
-      MainFactory.Add(ResourceType.Red, 2000);
+      MainFactory.Add(ResourceType.Red, 20000);
       MainFactory.Add(ResourceType.Blue, 1000);
     }
 
@@ -129,6 +129,7 @@ namespace IdleFactory.Components
       yield return (MainFactoryUnlocks.EnergyGrid, this.MainFactory.HasResourceObservable(ResourceType.Red, 5000));
       yield return (MainFactoryUnlocks.RedProductionBuffItem, this.FactoryDataService.Data.EnergyGrid.IsEnabledObservable);
       yield return (MainFactoryUnlocks.LaserDistanceBuffItem, this.FactoryDataService.Data.EnergyGrid.IsEnabledObservable);
+      yield return (MainFactoryUnlocks.BlueProductionEfficencyBuff, this.FactoryDataService.Data.EnergyGrid.IsEnabledObservable);
     }
 
     private class AvailableUnlock(MainFactoryUnlocks unlock, string costString, ICustomObservable<bool> canBuy, ICustomObservable<bool> isAvailable, bool alreadyUnlocked)
