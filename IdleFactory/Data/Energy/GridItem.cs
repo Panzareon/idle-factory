@@ -22,6 +22,11 @@
 
     public virtual IEnumerable<IBuff> Buffs => this.buffs;
 
+    public virtual bool LaserPassThrough(Laser laser)
+    {
+      return false;
+    }
+
     protected void ValueHasChanged()
     {
       this.hasChanged = true;

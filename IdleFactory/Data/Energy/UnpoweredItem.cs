@@ -16,7 +16,8 @@
     /// </summary>
     public required BuildableItem BuildableItem { get; set; }
 
-    public void HitByLaser(LargeInteger strength, float numberOfHits)
+    /// <inheritdoc/>
+    public void HitByLaser(EnergyGrid energyGrid, Laser laser, LargeInteger strength, float numberOfHits)
     {
       this.Power += strength * numberOfHits;
       this.ValueHasChanged();

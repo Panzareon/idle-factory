@@ -6,7 +6,8 @@
 
     public LargeInteger CurrentPowerValue { get; set; }
 
-    public void HitByLaser(LargeInteger strength, float numberOfHits)
+    /// <inheritdoc/>
+    public void HitByLaser(EnergyGrid energyGrid, Laser laser, LargeInteger strength, float numberOfHits)
     {
       this.CurrentPowerValue += strength;
     }

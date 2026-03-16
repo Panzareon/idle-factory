@@ -42,7 +42,7 @@
 		@if (laser.Direction.X == 0)
 		{
 			<div class="laser laser-vertical" style="left:@(GetStartPositionX(laser) * GridSize)px; top:@(GetStartPositionY(laser) * GridSize)px; height:@(GetLength(laser) * GridSize)px">
-				@if (laser.HitTargetDistance > 0)
+				@if (laser.HitTargetDistance > 0 && !laser.HitPassThrough)
 				{
 					<div class="laser-hit @(laser.Direction.Y > 0 ? "laser-hit-down" : "laser-hit-up")" />
 				}
@@ -52,7 +52,7 @@
 		else
 		{
 			<div class="laser laser-horizontal" style="left:@(GetStartPositionX(laser) * GridSize)px; top:@(GetStartPositionY(laser) * GridSize)px; width:@(GetLength(laser) * GridSize)px">
-				@if (laser.HitTargetDistance > 0)
+				@if (laser.HitTargetDistance > 0 && !laser.HitPassThrough)
 				{
 					<div class="laser-hit @(laser.Direction.X > 0 ? "laser-hit-right" : "laser-hit-left")" />
 				}

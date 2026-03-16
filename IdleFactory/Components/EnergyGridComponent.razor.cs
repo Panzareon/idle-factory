@@ -157,6 +157,10 @@ namespace IdleFactory.Components
 
           this.EnergyGrid.NeedRecalculateLaser();
           break;
+        case LaserRelayGridItem relayGridItem:
+          relayGridItem.Vertical = !relayGridItem.Vertical;
+          this.EnergyGrid.NeedRecalculateLaser();
+          break;
       }
     }
 

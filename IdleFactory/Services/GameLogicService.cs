@@ -22,6 +22,7 @@ namespace IdleFactory.Services
       factoryDataService.Data.MainFactory.ResourceGenerators.Add(new ResourceGenerator { ResourceType = ResourceType.Red, GenerationAmount = 1, GenerationTime = 1 });
       factoryDataService.Data.MainFactory.Resources.Add(ResourceType.Red, new Resource());
       factoryDataService.Data.EnergyGrid.AddGridItem(new LaserEmitter { Direction = new Vector2(0, 1), Position = new Vector2(0, 0), LaserStrength = 1 });
+      factoryDataService.Data.EnergyGrid.AddGridItem(new LaserRelayGridItem { Position = new Vector2(1, 0) });
       factoryDataService.Data.EnergyGrid.BuildableItems.Add(new BuildableItem(BuildableItemType.LaserEmitter));
       factoryDataService.Data.EnergyGrid.BuildableItems.Add(new BuildableItem(BuildableItemType.Mirror));
       this.stopwatch.Start();
@@ -135,7 +136,7 @@ namespace IdleFactory.Services
         }
 
         var targetPosition = laser.To + laser.Direction;
-        var target = energyGrid.Items.FirstOrDefault(x => x.Position == targetPosition);
+        var target = energyGrid.GetGridItem(targetPosition);
         if (target == null)
         {
           // Hit the wall instead of an item
@@ -144,7 +145,7 @@ namespace IdleFactory.Services
 
         if (target is IPowerSinkGridItem powerSink)
         {
-          powerSink.HitByLaser(laser.Strength, numberOfLasers);
+          powerSink.HitByLaser(energyGrid, laser, laser.Strength, numberOfLasers);
         }
       }
 

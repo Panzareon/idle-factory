@@ -115,13 +115,28 @@ namespace IdleFactory.Data.Energy
               currentLaser = new Laser(currentDirection, nextPosition, nextPosition, 0, currentLaser.Strength);
               break;
             default:
-              currentLaser = currentLaser with
+              if (item?.LaserPassThrough(currentLaser) == true)
               {
-                To = currentPosition,
-                HitTargetDistance = item == null ? 0.5f : 0.7f,
-              };
-              this.CalculatedLaser.Add(currentLaser);
-              return;
+                currentLaser = currentLaser with
+                {
+                  To = currentPosition,
+                  HitTargetDistance = 1f,
+                  HitPassThrough = true,
+                };
+                this.CalculatedLaser.Add(currentLaser);
+                currentLaser = new Laser(currentDirection, nextPosition, nextPosition, 0, currentLaser.Strength);
+                break;
+              }
+              else
+              {
+                currentLaser = currentLaser with
+                {
+                  To = currentPosition,
+                  HitTargetDistance = item == null ? 0.5f : 0.7f,
+                };
+                this.CalculatedLaser.Add(currentLaser);
+                return;
+              }
           }
         }
 
@@ -129,7 +144,10 @@ namespace IdleFactory.Data.Energy
       }
 
       currentLaser = currentLaser with { To = currentPosition };
-      this.CalculatedLaser.Add(currentLaser);
+      if (currentLaser.From != currentLaser.To)
+      {
+        this.CalculatedLaser.Add(currentLaser);
+      }
     }
 
     public (bool IsFree, GridItem? Item) Check(Vector2 nextPosition)
@@ -159,6 +177,11 @@ namespace IdleFactory.Data.Energy
       {
         existing.NumberOfItemsAvailable++;
       }
+    }
+
+    public GridItem? GetGridItem(Vector2 position)
+    {
+      return this.Items.FirstOrDefault(x => x.Position == position);
     }
   }
 }
