@@ -19,6 +19,8 @@ namespace IdleFactory.Data.Main
     LaserDistanceBuffItem = 6,
 
     BlueProductionEfficencyBuff = 7,
+
+    LaserRelayGridItem = 8,
   }
 
   public static class MainFactoryUnlocksExtensions
@@ -43,6 +45,8 @@ namespace IdleFactory.Data.Main
             return [new ResourceCost(ResourceType.Red, 50000), new ResourceCost(ResourceType.Blue, 1000)];
           case MainFactoryUnlocks.LaserDistanceBuffItem:
             return [new ResourceCost(ResourceType.Red, 50000)];
+          case MainFactoryUnlocks.LaserRelayGridItem:
+            return [new ResourceCost(ResourceType.Red, 500000), new ResourceCost(ResourceType.Blue, 50000)];
           default:
             throw new InvalidOperationException($"No costs specified for unlock {unlock}");
         }
@@ -69,6 +73,9 @@ namespace IdleFactory.Data.Main
             break;
           case MainFactoryUnlocks.LaserDistanceBuffItem:
             data.EnergyGrid.AddBuildableItem(BuildableItemType.LaserDistanceBuff);
+            break;
+          case MainFactoryUnlocks.LaserRelayGridItem:
+            data.EnergyGrid.AddBuildableItem(BuildableItemType.LaserRelayGridItem);
             break;
         }
       }

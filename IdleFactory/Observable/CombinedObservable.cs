@@ -7,11 +7,5 @@
     {
       return selector(source.Select(x => x.Value));
     }
-
-    protected override void Attach()
-    {
-      base.Attach();
-
-    }
   }
 }

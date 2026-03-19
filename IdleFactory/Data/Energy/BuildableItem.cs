@@ -10,6 +10,7 @@ namespace IdleFactory.Data.Energy
     RedProductionBuff = 3,
     LaserDistanceBuff = 4,
     BlueProductionEfficencyBuff = 5,
+    LaserRelayGridItem = 6,
   }
 
   public class BuildableItem
@@ -66,6 +67,8 @@ namespace IdleFactory.Data.Energy
         case BuildableItemType.BlueProductionEfficencyBuff:
         case BuildableItemType.LaserDistanceBuff:
           return 400;
+        case BuildableItemType.LaserRelayGridItem:
+          return 1000;
         default:
           throw new InvalidOperationException($"Cannot create item of type {this.Type}");
       }
@@ -89,6 +92,8 @@ namespace IdleFactory.Data.Energy
           return new ProductionEfficiencyBuff(ResourceType.Blue, ResourceType.Red);
         case BuildableItemType.LaserDistanceBuff:
           return new LaserDistanceBuff();
+        case BuildableItemType.LaserRelayGridItem:
+          return new LaserRelayGridItem();
         default:
           throw new InvalidOperationException($"Cannot create item of type {this.Type}");
       }

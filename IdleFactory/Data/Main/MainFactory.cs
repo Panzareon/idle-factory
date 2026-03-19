@@ -21,7 +21,7 @@ namespace IdleFactory.Data.Main
 
     public CustomObservableCollection<ResourceGenerator> ResourceGenerators { get; } = new([]);
 
-    public IList<MainFactoryUnlocks> Unlocks { get; } = [];
+    public CustomObservableCollection<MainFactoryUnlocks> Unlocks { get; } = [];
 
     public event EventHandler? PropertyChanged;
 

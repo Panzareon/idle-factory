@@ -48,5 +48,15 @@ namespace IdleFactory.Observable
     {
       return new ConcatObservableCollection<TTarget>(collection1, collection2);
     }
+
+    public static ICustomObservable<bool> Any<TTarget>(this IObservableCollection<TTarget> collection, Func<TTarget, bool> condition)
+    {
+      return new AggregateObservable<TTarget, bool>(collection, x => x.AsEnumerable().Any(condition));
+    }
+
+    public static ICustomObservable<bool> And(this ICustomObservable<bool> left, params ICustomObservable<bool>[] right)
+    {
+      return right.Prepend(left).CombineLatest(x => x.All(y => y));
+    }
   }
 }

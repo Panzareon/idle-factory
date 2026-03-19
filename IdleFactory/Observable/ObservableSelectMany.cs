@@ -18,9 +18,9 @@
       return target.Value;
     }
 
-    protected override void Detach()
+    protected override void DetachInternal()
     {
-      base.Detach();
+      base.DetachInternal();
       this.currentCachedTarget?.ValueChanged -= this.TargetValueChanged;
       this.currentCachedTarget = null;
     }

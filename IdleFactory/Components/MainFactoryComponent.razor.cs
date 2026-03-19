@@ -1,5 +1,6 @@
 using IdleFactory.Data.Main;
 using IdleFactory.Services;
+using IdleFactory.Observable;
 using Microsoft.AspNetCore.Components;
 
 namespace IdleFactory.Components
@@ -130,6 +131,9 @@ namespace IdleFactory.Components
       yield return (MainFactoryUnlocks.RedProductionBuffItem, this.FactoryDataService.Data.EnergyGrid.IsEnabledObservable);
       yield return (MainFactoryUnlocks.LaserDistanceBuffItem, this.FactoryDataService.Data.EnergyGrid.IsEnabledObservable);
       yield return (MainFactoryUnlocks.BlueProductionEfficencyBuff, this.FactoryDataService.Data.EnergyGrid.IsEnabledObservable);
+      yield return (MainFactoryUnlocks.LaserRelayGridItem,
+        this.FactoryDataService.Data.EnergyGrid.IsEnabledObservable
+        .And(this.MainFactory.Unlocks.Any(x => x == MainFactoryUnlocks.LaserDistanceBuffItem)));
     }
 
     private class AvailableUnlock(MainFactoryUnlocks unlock, string costString, ICustomObservable<bool> canBuy, ICustomObservable<bool> isAvailable, bool alreadyUnlocked)
