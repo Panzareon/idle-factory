@@ -156,7 +156,7 @@ namespace IdleFactory.Data
       var maxPrecision = MaxPrecision;
       if (this.Exponent < MaxPrecisionExponent)
       {
-        maxPrecision = 1.0 / ExponentValues[this.Exponent];
+        maxPrecision = 0.5 / ExponentValues[this.Exponent];
       }
 
       if (largeInteger.BaseValue + maxPrecision >= this.BaseValue

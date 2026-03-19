@@ -145,5 +145,15 @@ namespace IdleFactory.Tests.Data
       Assert.That(value1 >= value2, Is.True);
       Assert.That(value1 <= value2, Is.True);
     }
+
+    [TestCase(0, 1, ExpectedResult = false)]
+    [TestCase(0, 0, ExpectedResult = true)]
+    [TestCase(34435, 34436, ExpectedResult = false)]
+    [TestCase(34435, 34434, ExpectedResult = false)]
+    [TestCase(34435, 34435, ExpectedResult = true)]
+    public bool EqualsTest(long value1, long value2)
+    {
+      return object.Equals((LargeInteger)value1, (LargeInteger)value2);
+    }
   }
 }
