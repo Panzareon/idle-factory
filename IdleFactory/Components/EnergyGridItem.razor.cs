@@ -5,13 +5,16 @@ namespace IdleFactory.Components
 {
   public sealed partial class EnergyGridItem : IDisposable
   {
+    private Observer? gridItemObserver;
+
     [Parameter]
     public required GridItem Item { get; set; }
 
     protected override void OnInitialized()
     {
       base.OnInitialized();
-      this.Item.PropertyChanged += this.GridItemChanged;
+      this.gridItemObserver = this.Item.Observables.AsObservableCollection().OnAnyChanged();
+      this.gridItemObserver.ValueChanged += this.GridItemChanged;
     }
 
     private void GridItemChanged(object? sender, EventArgs e)
@@ -21,7 +24,7 @@ namespace IdleFactory.Components
 
     private string GetFillPercent(UnpoweredItem unpoweredItem)
     {
-      return ((double)(unpoweredItem.Power * 100 / unpoweredItem.RequiredPower)).ToString();
+      return ((double)(unpoweredItem.Power.Value * 100 / unpoweredItem.RequiredPower)).ToString();
     }
 
     private string GetClassName()
@@ -34,6 +37,7 @@ namespace IdleFactory.Components
         ProductionBuff => "production-buff",
         ProductionEfficiencyBuff => "production-efficiency-buff",
         LaserDistanceBuff => "laser-distance-buff",
+        LaserRelayGridItem => "laser-relay",
         _ => "default"
       };
 
@@ -42,7 +46,7 @@ namespace IdleFactory.Components
 
     public void Dispose()
     {
-      this.Item.PropertyChanged -= this.GridItemChanged;
+      this.gridItemObserver?.ValueChanged -= this.GridItemChanged;
     }
   }
 }

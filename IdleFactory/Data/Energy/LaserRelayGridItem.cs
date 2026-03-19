@@ -2,6 +2,10 @@
 {
   public class LaserRelayGridItem : GridItem, IPowerSinkGridItem
   {
+    private bool wasHitByLaser;
+
+    public BehaviorSubject<bool> Active { get; } = new() { Value = false };
+
     public bool Vertical { get; set; }
 
     public override bool LaserPassThrough(Laser laser)
@@ -35,12 +39,24 @@
 
       foreach (var position in positions)
       {
+        this.wasHitByLaser = true;
         var gridItem = energyGrid.GetGridItem(position);
         if (energyGrid.GetGridItem(position) is IPowerSinkGridItem powerSinkGridItem)
         {
           powerSinkGridItem.HitByLaser(energyGrid, null, strength, numberOfHits);
         }
       }
+    }
+
+    public void NextTick()
+    {
+      this.Active.Value = this.wasHitByLaser;
+      this.wasHitByLaser = false;
+    }
+
+    protected override IEnumerable<ICustomObservable> CollectObservables()
+    {
+      yield return this.Active;
     }
   }
 }

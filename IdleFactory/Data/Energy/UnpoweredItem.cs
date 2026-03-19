@@ -4,7 +4,7 @@
   {
     public required LargeInteger RequiredPower { get; set; }
 
-    public LargeInteger Power { get; set; }
+    public BehaviorSubject<LargeInteger> Power { get; } = new() { Value = 0 };
 
     /// <summary>
     /// Gets the grid item that will be build when this if powered up.
@@ -17,10 +17,20 @@
     public required BuildableItem BuildableItem { get; set; }
 
     /// <inheritdoc/>
-    public void HitByLaser(EnergyGrid energyGrid, Laser laser, LargeInteger strength, float numberOfHits)
+    public void HitByLaser(EnergyGrid energyGrid, Laser? laser, LargeInteger strength, float numberOfHits)
     {
-      this.Power += strength * numberOfHits;
-      this.ValueHasChanged();
+      this.Power.Value += strength * numberOfHits;
+    }
+
+    /// <inheritdoc/>
+    /// <remarks>Nothing to do here.</remarks>
+    public void NextTick()
+    {
+    }
+
+    protected override IEnumerable<ICustomObservable> CollectObservables()
+    {
+      yield return this.Power;
     }
   }
 }

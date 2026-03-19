@@ -25,6 +25,13 @@
 		case ProductionEfficiencyBuff productionBuff:
 			<div class="type @productionBuff.Type" />
 			break;
+		case LaserRelayGridItem laserRelayGridItem:
+			<div class="inner @(laserRelayGridItem.Vertical ? "vertical" : "horizontal") @(laserRelayGridItem.Active.Value ? "active" : "")" >
+				<div class="arrow left"/>
+				<div class="arrow right"/>
+				<div class="wall"/>
+			</div>
+			break;
 		case LaserDistanceBuff laserDistanceBuff:
 			<div class="line" />
 			<div class="distance" />

@@ -10,5 +10,7 @@
     /// <param name="strength">The strength of the laser.</param>
     /// <param name="numberOfHits">The number of ticks that this was active.</param>
     void HitByLaser(EnergyGrid energyGrid, Laser? laser, LargeInteger strength, float numberOfHits);
+
+    void NextTick();
   }
 }

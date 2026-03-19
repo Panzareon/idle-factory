@@ -4,7 +4,7 @@
   {
     private List<IBuff> buffs = [];
 
-    private bool hasChanged = false;
+    private IReadOnlyList<ICustomObservable>? observables;
 
     public GridItem()
     {
@@ -14,7 +14,12 @@
       }
     }
 
-    public event EventHandler? PropertyChanged;
+    public IReadOnlyList<ICustomObservable> Observables => this.observables ??= [.. this.CollectObservables()];
+
+    protected virtual IEnumerable<ICustomObservable> CollectObservables()
+    {
+      return [];
+    }
 
     public bool PlacedInGrid { get; set; }
 
@@ -25,20 +30,6 @@
     public virtual bool LaserPassThrough(Laser laser)
     {
       return false;
-    }
-
-    protected void ValueHasChanged()
-    {
-      this.hasChanged = true;
-    }
-
-    public void AfterGameTick()
-    {
-      if (this.hasChanged)
-      {
-        this.PropertyChanged?.Invoke(this, EventArgs.Empty);
-        this.hasChanged = false;
-      }
     }
   }
 }

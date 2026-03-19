@@ -7,9 +7,15 @@
     public LargeInteger CurrentPowerValue { get; set; }
 
     /// <inheritdoc/>
-    public void HitByLaser(EnergyGrid energyGrid, Laser laser, LargeInteger strength, float numberOfHits)
+    public void HitByLaser(EnergyGrid energyGrid, Laser? laser, LargeInteger strength, float numberOfHits)
     {
       this.CurrentPowerValue += strength;
+    }
+
+    public void NextTick()
+    {
+      this.LastPowerValue = this.CurrentPowerValue;
+      this.CurrentPowerValue = 0;
     }
   }
 }

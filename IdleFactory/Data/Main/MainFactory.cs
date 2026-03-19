@@ -13,7 +13,7 @@ namespace IdleFactory.Data.Main
   {
     public MainFactory()
     {
-      this.observableResources = new() { Value = this.Resources };
+      this.observableResources = new(false) { Value = this.Resources };
     }
     public IDictionary<ResourceType, Resource> Resources { get; } = new Dictionary<ResourceType, Resource>();
 

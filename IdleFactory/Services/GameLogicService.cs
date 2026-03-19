@@ -151,7 +151,7 @@ namespace IdleFactory.Services
 
       foreach (var gridItem in energyGrid.Items.ToList())
       {
-        if (gridItem is UnpoweredItem unpoweredItem && unpoweredItem.Power >= unpoweredItem.RequiredPower)
+        if (gridItem is UnpoweredItem unpoweredItem && unpoweredItem.Power.Value >= unpoweredItem.RequiredPower)
         {
           // Remove without adding to the not placed items
           energyGrid.Items.Remove(unpoweredItem);
@@ -160,13 +160,10 @@ namespace IdleFactory.Services
           energyGrid.AddGridItem(unpoweredItem.BuildTarget);
         }
 
-        if (gridItem is PoweredItem poweredItem)
+        if (gridItem is IPowerSinkGridItem poweredItem)
         {
-          poweredItem.LastPowerValue = poweredItem.CurrentPowerValue;
-          poweredItem.CurrentPowerValue = 0;
+          poweredItem.NextTick();
         }
-
-        gridItem.AfterGameTick();
       }
     }
 
